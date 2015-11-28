@@ -4,8 +4,8 @@
 
 int main(int argc, char *argv[]){
 	FILE *fichier = fopen(argv[1], "w");
-	uint32_t c[256]={6};
-	fwrite(c, sizeof(c[0]), 256, fichier);
+	uint32_t c[256]={0};
+	fwrite(c, sizeof(uint32_t), 256, fichier);
 	fclose(fichier);
 	return 0;
 }
