@@ -1,16 +1,41 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-error read_physical_block(disk_id id, block b, uint32_t num){
-		
-	return 0;
+typedef struct error error;
+struct error{
+	char *error_desc;
+	int error_id;
+};
+
+typedef struct disk_id disk_id;
+struct disk_id{
+	char *disk_name;
+};
+
+typedef struct block block;
+struct block{
+	int block_size;
+	int block_id;
+};
+
+error read_physical_block(disk_id id, block b, int num){
+	error rep;
+	FILE *disk = NULL;
+	disk = fopen(id.disk_name, "r");
+	if(disk==NULL){
+		rep.error_desc = "Disk introuvable";
+		rep.error_id = 1;
+		return rep;
+	}
+	fclose(disk);
+	return rep;
 }
 
 int read(char *ptr_file){
 	FILE *file = NULL;
-	unsigned char octet = 0;
 	file = fopen(ptr_file, "rb");
-	if(fichier == NULL)
+	unsigned char octet = 0;
+	if(file == NULL)
 		fprintf(stderr, "Erreur lors de l'ouverture du fichier...\n");
 	int i=0;
 	while(fread(&octet, 1, sizeof(octet), file) != 0){
@@ -22,6 +47,11 @@ int read(char *ptr_file){
 		i++;
 	}
 	printf("\n");
-	fclose(fichier);
+	fclose(file);
 	return 0;
+}
+
+int main(){
+	printf("Execution en cours...\n");
+	printf("...Execution terminée.\n");
 }
