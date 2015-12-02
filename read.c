@@ -19,6 +19,20 @@ struct block{
 	int block_block[1024];
 };
 
+error write_physical_block(disk_id id,block b, uint32_t num){
+	error rep;
+	FILE *disk =NULL;
+	disk = fopen(id.disk_name,"w");
+	if(disk==NULL){
+		rep.error_desc = "Disk introuvable";
+		rep.error_id = 1;
+		return rep;
+	}
+	fseek(disk,(num*1024),SEEK_SET);
+	fwrite(b.block_block,1,sizeof(uint32_t),disk);
+	return rep;
+}
+
 error read_physical_block(disk_id id, block b, uint32_t num){
 	error rep;
 	FILE *disk = NULL;
@@ -28,7 +42,7 @@ error read_physical_block(disk_id id, block b, uint32_t num){
 		rep.error_id = 1;
 		return rep;
 	}
-	fseek(disk, SEEK_SET, num*1024);
+	fseek(disk,num*1024,SEEK_SET);
 	fread(b.block_block, 256, sizeof(uint32_t), disk);
 	fclose(disk);
 	return rep;
@@ -56,5 +70,11 @@ int read(char *ptr_file){
 
 int main(){
 	printf("Execution en cours...\n");
+		block monblock;
+		monblock.block_id = 1;
+		disk_id mondisque;
+		mondisque.disk_name = "tabite.txt";
+		read_physical_block(mondisque,monblock,0);
+		printf("%d \n",monblock.block_block[0]);
 	printf("...Execution terminée.\n");
 }
