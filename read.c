@@ -14,8 +14,8 @@ struct disk_id{
 
 typedef struct block block;
 struct block{
-	int block_size;
 	int block_id;
+	int[1024] block_block;
 };
 
 error read_physical_block(disk_id id, block b, int num){
