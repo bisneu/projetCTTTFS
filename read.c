@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 typedef struct error error;
 struct error{
@@ -15,10 +16,10 @@ struct disk_id{
 typedef struct block block;
 struct block{
 	int block_id;
-	int[1024] block_block;
+	int block_block[1024];
 };
 
-error read_physical_block(disk_id id, block b, int num){
+error read_physical_block(disk_id id, block b, uint32_t num){
 	error rep;
 	FILE *disk = NULL;
 	disk = fopen(id.disk_name, "r");
@@ -27,6 +28,8 @@ error read_physical_block(disk_id id, block b, int num){
 		rep.error_id = 1;
 		return rep;
 	}
+	fseek(disk, SEEK_SET, num*1024);
+	fread(b.block_block, 256, sizeof(uint32_t), disk);
 	fclose(disk);
 	return rep;
 }
