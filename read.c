@@ -16,7 +16,7 @@ struct disk_id{
 typedef struct block block;
 struct block{
 	int block_id;
-	int block_block[1024];
+	int *block_block;
 };
 
 error write_physical_block(disk_id id,block b, uint32_t num){
@@ -29,52 +29,47 @@ error write_physical_block(disk_id id,block b, uint32_t num){
 		return rep;
 	}
 	fseek(disk,(num*1024),SEEK_SET);
-	fwrite(b.block_block,1,sizeof(uint32_t),disk);
+	fwrite(b.block_block, sizeof(uint32_t), 1, disk);
 	return rep;
 }
 
 error read_physical_block(disk_id id, block b, uint32_t num){
 	error rep;
+	rep.error_id = 0;
 	FILE *disk = NULL;
 	disk = fopen(id.disk_name, "r");
 	if(disk==NULL){
 		rep.error_desc = "Disk introuvable";
 		rep.error_id = 1;
+		printf("ERREUR\n");
 		return rep;
 	}
-	fseek(disk,num*1024,SEEK_SET);
-	fread(b.block_block, 256, sizeof(uint32_t), disk);
+	fseek(disk,(num*1024),SEEK_SET);
+	fread(b.block_block, sizeof(uint32_t), 256, disk);
 	fclose(disk);
 	return rep;
-}
-
-int read(char *ptr_file){
-	FILE *file = NULL;
-	file = fopen(ptr_file, "rb");
-	unsigned char octet = 0;
-	if(file == NULL)
-		fprintf(stderr, "Erreur lors de l'ouverture du fichier...\n");
-	int i=0;
-	while(fread(&octet, 1, sizeof(octet), file) != 0){
-		if(i%4==0 && i!=0)
-			printf(" ");
-		if(i%32==0 && i!=0)
-			printf("\n");
-		printf("%02x ", octet);
-		i++;
-	}
-	printf("\n");
-	fclose(file);
-	return 0;
 }
 
 int main(){
 	printf("Execution en cours...\n");
 		block monblock;
+		monblock.block_block = malloc(1024);
 		monblock.block_id = 1;
+		printf("AVANT read_physical_block\n");
+		printf("block_block[0] = %d \n",monblock.block_block[0]);
+		printf("block_block[1] = %d \n",monblock.block_block[1]);
+		printf("block_block[2] = %d \n",monblock.block_block[2]);
+		printf("block_block[3] = %d \n",monblock.block_block[3]);
 		disk_id mondisque;
 		mondisque.disk_name = "tabite.txt";
-		read_physical_block(mondisque,monblock,0);
-		printf("%d \n",monblock.block_block[0]);
+		error check = read_physical_block(mondisque, monblock, 0);
+		if(check.error_id != 0)
+			printf("ERREUR\n");
+		printf("\n");
+		printf("APRES read_physical_block\n");
+		printf("block_block[0] = %d \n",monblock.block_block[0]);
+		printf("block_block[1] = %d \n",monblock.block_block[1]);
+		printf("block_block[2] = %d \n",monblock.block_block[2]);
+		printf("block_block[3] = %d \n",monblock.block_block[3]);
 	printf("...Execution terminée.\n");
 }
