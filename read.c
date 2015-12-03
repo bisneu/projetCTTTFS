@@ -30,6 +30,7 @@ error write_physical_block(disk_id id,block b, uint32_t num){
 	}
 	fseek(disk,(num*1024),SEEK_SET);
 	fwrite(b.block_block, sizeof(uint32_t), 1, disk);
+	fclose(disk);
 	return rep;
 }
 
@@ -71,12 +72,14 @@ int main(){
 		printf("block_block[1] = %d \n",monblock.block_block[1]);
 		printf("block_block[2] = %d \n",monblock.block_block[2]);
 		printf("block_block[3] = %d \n",monblock.block_block[3]);
-		write_physical_block(mondisque,monblock,1);
+		check = write_physical_block(mondisque, monblock, 1);
+		if(check.error_id != 0)
+			printf("ERREUR WRITE\n");
 		check = read_physical_block(mondisque, monblock, 1);
 		if(check.error_id != 0)
-			printf("ERREUR\n");
+			printf("ERREUR READ\n");
 		printf("\n");
-		printf("APRES read_physical_block\n");
+		printf("APRES write_physical_block\n");
 		printf("block_block[0] = %d \n",monblock.block_block[0]);
 		printf("block_block[1] = %d \n",monblock.block_block[1]);
 		printf("block_block[2] = %d \n",monblock.block_block[2]);
