@@ -21,6 +21,7 @@ struct block{
 
 error write_physical_block(disk_id id,block b, uint32_t num){
 	error rep;
+	rep.error_id = 0;
 	FILE *disk =NULL;
 	disk = fopen(id.disk_name,"w");
 	if(disk==NULL){
@@ -28,8 +29,10 @@ error write_physical_block(disk_id id,block b, uint32_t num){
 		rep.error_id = 1;
 		return rep;
 	}
+	printf("%ld\n", ftell(disk));
 	fseek(disk,(num*1024),SEEK_SET);
-	fwrite(b.block_block, sizeof(uint32_t), 1, disk);
+	printf("%ld\n", ftell(disk));
+	fwrite(b.block_block, sizeof(uint32_t), 256, disk);
 	fclose(disk);
 	return rep;
 }
@@ -51,6 +54,23 @@ error read_physical_block(disk_id id, block b, uint32_t num){
 	return rep;
 }
 
+int display(disk_id id, block b, uint32_t num){
+	FILE *disk = NULL;
+	disk = fopen(id.disk_name, "r");
+	uint32_t c[256];
+	fread(c, sizeof(uint32_t), 1024, disk);
+	fclose(disk);
+	int i=0;
+	printf("| ");
+	for(i=0; i<256; i++){
+		if(i%4 == 0 && i!=0){printf(" | ");}
+		if(i%32 == 0 && i!=0){printf("\n| ");}
+		printf("%d", c[i]);
+	}
+	printf(" |\n");
+	return 0;
+}
+
 int main(){
 	printf("Execution en cours...\n");
 		block monblock;
@@ -65,24 +85,32 @@ int main(){
 		mondisque.disk_name = "tabite.txt";
 		error check = read_physical_block(mondisque, monblock, 0);
 		if(check.error_id != 0)
-			printf("ERREUR\n");
+			printf("ERREUR READ\n");
 		printf("\n");
 		printf("APRES read_physical_block\n");
 		printf("block_block[0] = %d \n",monblock.block_block[0]);
 		printf("block_block[1] = %d \n",monblock.block_block[1]);
 		printf("block_block[2] = %d \n",monblock.block_block[2]);
 		printf("block_block[3] = %d \n",monblock.block_block[3]);
-		check = write_physical_block(mondisque, monblock, 1);
+		display(mondisque, monblock, 0);
+		monblock.block_block[4] = 9;
+		monblock.block_block[5] = 9;
+		monblock.block_block[6] = 9;
+		monblock.block_block[7] = 9;
+		check = write_physical_block(mondisque, monblock, 0);
 		if(check.error_id != 0)
 			printf("ERREUR WRITE\n");
-		check = read_physical_block(mondisque, monblock, 1);
+		check = read_physical_block(mondisque, monblock, 0);
 		if(check.error_id != 0)
 			printf("ERREUR READ\n");
 		printf("\n");
 		printf("APRES write_physical_block\n");
+/*
 		printf("block_block[0] = %d \n",monblock.block_block[0]);
 		printf("block_block[1] = %d \n",monblock.block_block[1]);
 		printf("block_block[2] = %d \n",monblock.block_block[2]);
 		printf("block_block[3] = %d \n",monblock.block_block[3]);
+*/
+		display(mondisque, monblock, 0);
 	printf("...Execution terminée.\n");
 }
