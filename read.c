@@ -1,22 +1,33 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <endian.h>
 
 typedef struct error error;
 struct error{
 	char *error_desc;
-	int error_id;
+	uint32_t error_id;
 };
 
 typedef struct disk_id disk_id;
 struct disk_id{
+	uint32_t *disk_id;
 	char *disk_name;
+	FILE *disk_file;
 };
 
 typedef struct block block;
 struct block{
-	int *block_block;
+	uint32_t *block_block;
 };
+
+void little_endian(block b){
+	int i=0;
+	for(i=0; i<256; i++){
+		uint32_t tmp = htole32(b.block_block[i]);
+		b.block_block[i] = tmp;
+	}
+}
 
 error write_physical_block(disk_id id,block b, uint32_t num){
 	error rep;
@@ -28,10 +39,12 @@ error write_physical_block(disk_id id,block b, uint32_t num){
 		return rep;
 	}
 	fseek(disk,(num*1024),SEEK_SET);
+	little_endian(b);
 	fwrite(b.block_block, sizeof(uint32_t), 256, disk);
 	fclose(disk);
 	return rep;
 }
+
 
 error read_physical_block(disk_id id, block b, uint32_t num){
 	error rep;
