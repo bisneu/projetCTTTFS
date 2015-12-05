@@ -11,7 +11,7 @@ struct error{
 
 typedef struct disk_id disk_id;
 struct disk_id{
-	uint32_t *disk_id;
+	uint32_t disk_id;
 	char *disk_name;
 	FILE *disk_file;
 };
@@ -45,6 +45,21 @@ error write_physical_block(disk_id id,block b, uint32_t num){
 	return rep;
 }
 
+/* Ferme le fichier qui correspond au disque et supprime tout les pointeurs de la mémoire afin de mettre un terme à la session*/
+error stop_disk(disk_id d){
+	error rep;
+	rep.error_id = 1;
+	if(d.disk_file!=NULL){
+		rep.error_id = fclose(d.disk_file);
+		if(rep.error_id!=0){
+			rep.error_desc = "erreur fermeture";
+			return rep;
+		}
+		return rep;
+	}
+	rep.error_desc = "erreur fichier null";
+	return rep;
+}
 
 error read_physical_block(disk_id id, block b, uint32_t num){
 	error rep;
@@ -103,6 +118,10 @@ int main(int argc, char *argv[]){
 		printf("--> ERREUR READ <--\n");
 	printf("\nAPRES read_physical_block(my_disk, my_block, 1) : block_block[2,3,6,7] = {%d,%d,%d,%d} \n", my_block.block_block[2], my_block.block_block[3], my_block.block_block[6], my_block.block_block[7]);
 	printf("\nAPRES write_physical_block(my_disk, my_block, 1)\n");
-	display(my_disk, 2);
+	display(my_disk, 2);	
 	printf("...Execution terminée.\n");
+
+
+
+
 }
