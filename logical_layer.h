@@ -8,5 +8,5 @@ error read_block(disk_id id, block b, uint32_t num);
 error start_disk(char *name, disk_id *id);
 error stop_disk(disk_id id);
 error sync_disk(disk_id id);
-
+int exist_disk(char *name);
 #endif
