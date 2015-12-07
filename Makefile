@@ -12,7 +12,6 @@ $(EXEC): $(OBJ)
 
 physical_layer.o: physical_layer.h
 logical_layer.o: logical_layer.h
-tfs_create.o: tfs_create.h
 
 %.o: %.c
 	$(CC) -o $@ -c $< $(CFLAGS)
@@ -24,3 +23,7 @@ clean:
 
 mrproper: clean
 	rm -rf $(EXEC)
+
+tfs:
+	rm -rf *.tfs
+
