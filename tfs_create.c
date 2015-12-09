@@ -17,7 +17,9 @@ int main(int argc, char *argv[]){
 		printf("./tfs_create -s size [name]\n");
 		return 2;
 	}
+	printf("Taille 1 : %s\n", argv[2]);
 	int size = atoi(argv[2]);
+	printf("Taille 2 : %d\n", size);
 	DIR *currentDir=opendir(".");
 	struct dirent *entry=readdir(currentDir);
 	char *name;
@@ -49,17 +51,20 @@ int main(int argc, char *argv[]){
 		}
 	}while(entry!=NULL);
 	closedir(currentDir);
-	printf("Nom attribué : %s.\n", name);
-	FILE *file = fopen(name, "w");
-	int nb_elem = size*256;
+	printf("Nom attribué : %s\n", name);
+	FILE *file = fopen(name, "a+");
 	uint32_t *c = NULL;
-	c = malloc(nb_elem*4);
+	c = malloc(1024);
 	c[0]=size;
 	int i=1;
-	for(i=1; i<nb_elem; i++){
+	for(i=1; i<256; i++){
 		c[i]=0;
 	}
-	fwrite(c, sizeof(uint32_t), nb_elem, file);
+	fwrite(c, sizeof(uint32_t), 256, file);
+	c[0]=0;
+	for(i=1; i<size; i++){
+		fwrite(c, sizeof(uint32_t), 256, file);
+	}
 	fclose(file);
 	free(c);
 	return 0;
