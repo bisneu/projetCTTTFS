@@ -11,7 +11,7 @@ error write_physical_block(disk_id id,block b, uint32_t num){
 	}
 	fseek(disk,(num*1024),SEEK_SET);
 	little_endian(b);
-	fwrite(b.block_block, sizeof(uint32_t), 256, disk);
+	fwrite(b.block_block,sizeof(uint8_t),1024,disk);
 	fclose(disk);
 	return rep;
 }
@@ -27,7 +27,7 @@ error read_physical_block(disk_id id, block b, uint32_t num){
 		return rep;
 	}
 	fseek(disk,(num*1024),SEEK_SET);
-	fread(b.block_block, sizeof(uint32_t), 256, disk);
+	fread(b.block_block, sizeof(uint8_t),1024, disk);
 	fclose(disk);
 	return rep;
 }

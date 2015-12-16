@@ -1,5 +1,4 @@
 #ifndef DEF_PHYSICAL_LAYER
-
 #define DEF_PHYSICAL_LAYER
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,7 +20,7 @@ struct disk_id{
 
 typedef struct block block;
 struct block{
-	uint32_t *block_block;
+	uint8_t *block_block;
 };
 
 error write_physical_block(disk_id id,block b, uint32_t num);
