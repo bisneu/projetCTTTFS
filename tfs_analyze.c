@@ -15,25 +15,37 @@ int main(int argc, char *argv[]){
 	char *name;
 	name = (argc==4)?argv[3]:"disk.tfs";
 	if(start_disk(*name, *id)==1){
-		fprintf(stderr, "Erreur lors du démarrage du disque.\n");
+		fprintf(stderr, "/!\ Erreur lors du démarrage du disque.\n");
+		return 1;
 	}
 	else{
-		printf("Démarrage du disque.\n");
+		printf("--- Démarrage du disque. ---\n");
 	  	block b;
 		uint32_t num = 0;
-		if(read_block(id, b, num)==1){
-			fprintf(stderr, "Erreur lors de la lecture du block.\n");
+		if(read_block(id, b, 0)==1){
+			fprintf(stderr, "/!\ Erreur lors de la lecture du block.\n");
+			return 1;
 		}
-		else{	  
-			printf("Lecture du block.\n");
-			printf("	Nom du disque : %s\n", name);
-			printf("	Nombre de blocks : %d\n", );
-
+		else{
+			uint32_t size = read_size_inblock(b);
+			uint32_t nb_part = read_inblock(1,b);
+			printf("Lecture des informations.\n");
+			printf(" > Nom du disque : %s\n", name);
+			printf(" > Nombre de blocks : %d\n", size);
+			printf(" > Nombre de Partitions : %d\n", size);
+			if(nb_part>0){
+				uint32_t i = 0;
+				for(i=0; i<nb_part; i++){
+					printf(" > Partition %d : %d blocks\n", i, read_inblock(i+2,b));
+				}
+			}
+			printf("Lecture terminée.\n");
 			if(stop_disk(*id)==1){
-				fprintf(stderr, "Erreur lors de l'arrêt du disque.\n");
+				fprintf(stderr, "/!\ Erreur lors de l'arrêt du disque.\n");
+				return 1;
 			}
 			else{
-				printf("Arrêt du disque.\n");
+				printf("--- Arrêt du disque. ---\n");
 			}
 		}
 	}
