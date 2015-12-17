@@ -1,7 +1,10 @@
 #include "logical_layer.h"
 
-/************************************** fonction permetant à l écriture dans un block en little endian 32 bit ******************************/
-// convertie int en char pour la conversion en hexadécimal
+/* DEBUT fonction permetant à l écriture dans un block en little endian 32 bit */
+
+/*
+** Convertit un int en char pour la conversion en hex
+*/
 char convert_char(int i){
 	if(i==0) return '0';
 	else if(i==1) return '1';
@@ -19,31 +22,46 @@ char convert_char(int i){
 	else if(i==13) return 'd';
 	else if(i==14) return 'e';
 	else if(i==15) return 'f';
-	else return '0';
-	
+	else return '0';	
 }
 
-// convertie un int en une chaine de caractere hexadecimal 
-void convertir_32(int i, char* tab){
-	int tmp = i;
-	tab[0] = '0';
-	tab[1] = '0';
-	tab[2] = '0';
-	tab[3] = '0';
-	tab[4] = '0';
-	tab[5] = '0';
-	tab[6] = '0';
-	tab[7] = '0';
+/*
+** Convertit un int en une chaine de 8 caracteres hex
+*/
+void convertir_32(int decimal, char* hexa){
+	int tmp = decimal;
+	int i=0;
+	for(i=0; i<8; i++){
+		hexa[i] = '0';
+	}
 	int compteur=7;
 	while(tmp != 0){
 		int modulo = tmp%16;
-		tab[compteur] = convert_char(modulo);
+		hexa[compteur] = convert_char(modulo);
 		compteur--;
 		tmp = tmp/16;	
 	}		
 }
 
-// convertie des caracteres hexadecimal en int 
+/*
+** Convertit un int en une chaine de 2 caracteres hex
+*/
+void convertir_8(int decimal, char* hexa){
+	hexa[0] = '0';
+	hexa[1] = '0';
+	int compteur=1;
+	uint8_t tmp = decimal;
+	while(tmp != 0){
+		int modulo = tmp%16;
+		hexa[compteur] = convert_char(modulo);
+		compteur--;
+		tmp = tmp/16;
+	}
+}
+
+/*
+** Convertit des caracteres hex en int
+*/
 uint8_t hexa_to_int(char* hex){
 	if(strcmp(hex,"a")==0) return 10;
 	else if(strcmp(hex,"b")==0) return 11;
@@ -55,7 +73,9 @@ uint8_t hexa_to_int(char* hex){
 }
  
 
-// concatene deux caractere hexadecimal et renvoi le decimal correspondant
+/*
+** Concatène deux caractere hex et renvoi le décimal correspondant
+*/
 uint8_t concat(char c, char c2){
 	char tab[2];
 	char tab2[2];
@@ -66,24 +86,51 @@ uint8_t concat(char c, char c2){
 	return hexa_to_int(tab)*16+hexa_to_int(tab2);	
 }
 
-// met les couple d'hexa dans un tableau de 4 cases 
+/*
+** Met les couples d'hexa dans un tableau de 4 cases
+*/
 void convert_to_decimal(char* t, uint8_t* tab){
-	tab[0] = concat(t[6],t[7]);	
-	tab[1] = concat(t[4],t[5]);	
-	tab[2] = concat(t[2],t[3]);	
-	tab[3] = concat(t[0],t[1]);	
+	int i=0;
+	for(i=0;i<4;i++){
+		tab[i] = concat(t[6-(2*i)],t[7-(2*i)]);
+	}
 }
 
+/*
+** Ecrit dans un block en little endian 32 bit
+*/
 void write_size_inblock(int size, FILE* file){
-	char *hexadecimal = malloc(sizeof(char)*8); 
-	uint8_t *decimal = malloc(sizeof(uint8_t)*4); 
+	char *hexadecimal = malloc(sizeof(char)*8);
+	uint8_t *decimal = malloc(sizeof(uint8_t)*4);
 	convertir_32(size,hexadecimal);
 	convert_to_decimal(hexadecimal,decimal);
 	fseek(file,0,SEEK_SET);
 	fwrite(decimal,sizeof(uint8_t),4,file);
-	
 }
-/***************************************************************************************************************************************/
+/* FIN */
+
+/*
+** Lit dans un block en little endian 32 bit
+*/
+void read_inblock(int indice, block b){
+	char *hexa0 = malloc(sizeof(char)*2);
+	char *hexa1 = malloc(sizeof(char)*2);
+	char *hexa2 = malloc(sizeof(char)*2);
+	char *hexa3 = malloc(sizeof(char)*2);
+	uint8_t *decimal = malloc(sizeof(uint8_t)*4);
+	int i=0;
+	for(i=0;i<4;i++){
+		decimal[i] = b.block_block[i+(indice*4)];
+	}
+	convertir_2(decimal[0],hexa0);
+	convertir_2(decimal[1],hexa1);
+	convertir_2(decimal[2],hexa2);
+	convertir_2(decimal[3],hexa3);
+	strcat(hexa3, strcat(hexa2, strcat(hexa1,hexa0)));
+	uint32_t final;
+	sscanf(hexa3, "%x", &final);
+	printf("Hexa : 0x%x | Deci : %d\n", final, final);
+}
 
 /*
 ** Permet d'écrire un bloc b sur le disque id à l'emplacement num.

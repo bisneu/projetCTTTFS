@@ -56,11 +56,11 @@ int main(int argc, char *argv[]){
 	uint32_t *c = NULL;
 	c = malloc(1024);
 	int i=0;
-	for(i=0; i<256; i++){
+	for(i=0; i<1024; i++){
 		c[i]=0;
 	}
 	for(i=0; i<size; i++){
-		fwrite(c, sizeof(uint32_t), 256, file);
+		fwrite(c, sizeof(uint8_t), 1024, file);
 	}
 	write_size_inblock(size,file);
 	fclose(file);
