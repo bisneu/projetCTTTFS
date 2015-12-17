@@ -32,7 +32,7 @@ int main(int argc, char *argv[]){
 			printf("Lecture des informations.\n");
 			printf(" > Nom du disque : %s\n", name);
 			printf(" > Nombre de blocks : %d\n", size);
-			printf(" > Nombre de Partitions : %d\n", size);
+			printf(" > Nombre de Partitions : %d\n", nb_part);
 			if(nb_part>0){
 				uint32_t i = 0;
 				for(i=0; i<nb_part; i++){
