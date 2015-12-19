@@ -97,22 +97,32 @@ void convert_to_decimal(char* t, uint8_t* tab){
 }
 
 /*
+** convertie en little endian un int donnée donnée 
+*/
+void my_little_endian(uint32_t elem, uint8_t *tab){
+	char *hexadecimal = malloc(sizeof(char)*8);
+	convertir_32(elem,hexadecimal);
+	convert_to_decimal(hexadecimal,tab);
+	free(hexadecimal); 
+}
+
+
+/*
 ** Ecrit dans un block en little endian 32 bit
 */
 void write_size_inblock(int size, FILE* file){
-	char *hexadecimal = malloc(sizeof(char)*8);
-	uint8_t *decimal = malloc(sizeof(uint8_t)*4);
-	convertir_32(size,hexadecimal);
-	convert_to_decimal(hexadecimal,decimal);
+	uint8_t *decimal = malloc(sizeof(uint8_t)*4); 
+	my_little_endian(size,decimal);
 	fseek(file,0,SEEK_SET);
 	fwrite(decimal,sizeof(uint8_t),4,file);
+	free(decimal);
 }
 /* FIN */
 
 /*
 ** Lit dans un block en little endian 32 bit
 */
-void read_inblock(int indice, block b){
+uint32_t read_inblock(int indice, block b){
 	char *hexa0 = malloc(sizeof(char)*2);
 	char *hexa1 = malloc(sizeof(char)*2);
 	char *hexa2 = malloc(sizeof(char)*2);
@@ -122,14 +132,15 @@ void read_inblock(int indice, block b){
 	for(i=0;i<4;i++){
 		decimal[i] = b.block_block[i+(indice*4)];
 	}
-	convertir_2(decimal[0],hexa0);
-	convertir_2(decimal[1],hexa1);
-	convertir_2(decimal[2],hexa2);
-	convertir_2(decimal[3],hexa3);
+	convertir_8(decimal[0],hexa0);
+	convertir_8(decimal[1],hexa1);
+	convertir_8(decimal[2],hexa2);
+	convertir_8(decimal[3],hexa3);
 	strcat(hexa3, strcat(hexa2, strcat(hexa1,hexa0)));
 	uint32_t final;
 	sscanf(hexa3, "%x", &final);
 	printf("Hexa : 0x%x | Deci : %d\n", final, final);
+	return final;
 }
 
 /*
