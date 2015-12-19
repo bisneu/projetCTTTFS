@@ -21,13 +21,12 @@ int main(int argc, char *argv[]){
 	else{
 		printf("--- Démarrage du disque. ---\n");
 	  	block b;
-		uint32_t num = 0;
 		if(read_block(id, b, 0).error_id==1){
 			fprintf(stderr, "Erreur lors de la lecture du block.\n");
 			return 1;
 		}
 		else{
-			uint32_t size = read_size_inblock(b);
+			uint32_t size = read_inblock(0,b);
 			uint32_t nb_part = read_inblock(1,b);
 			printf("Lecture des informations.\n");
 			printf(" > Nom du disque : %s\n", name);

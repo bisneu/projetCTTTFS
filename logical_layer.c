@@ -106,7 +106,6 @@ void my_little_endian(uint32_t elem, uint8_t *tab){
 	free(hexadecimal); 
 }
 
-
 /*
 ** Ecrit dans un block en little endian 32 bit
 */
@@ -140,7 +139,27 @@ uint32_t read_inblock(int indice, block b){
 	uint32_t final;
 	sscanf(hexa3, "%x", &final);
 	printf("Hexa : 0x%x | Deci : %d\n", final, final);
+	free(hexa0);
+	free(hexa1);
+	free(hexa2);
+	free(hexa3);
 	return final;
+}
+
+/*
+** Permet de vérifier l'existence du fichier nommé name.
+*/
+int exist_disk(char *name){
+	DIR *currentDir=opendir(".");
+	struct dirent *entry=readdir(currentDir);
+	do{
+		if(strcmp(name,entry->d_name)==0){
+			return 0;
+		}
+		entry=readdir(currentDir);
+	}while(entry!=NULL);
+	closedir(currentDir);	
+	return 1;
 }
 
 /*
@@ -181,22 +200,6 @@ error start_disk(char *name, disk_id *id){
 	}
 	rep.error_desc = "Erreur fichier introuvable.";
 	return rep;
-}
-
-/*
-** Permet de vérifier l'existence du fichier nommé name.
-*/
-int exist_disk(char *name){
-	DIR *currentDir=opendir(".");
-	struct dirent *entry=readdir(currentDir);
-	do{
-		if(strcmp(name,entry->d_name)==0){
-			return 0;
-		}
-		entry=readdir(currentDir);
-	}while(entry!=NULL);
-	closedir(currentDir);	
-	return 1;
 }
 
 /* 
