@@ -14,16 +14,16 @@ int main(int argc, char *argv[]){
 	disk_id id;
 	char *name;
 	name = (argc==4)?argv[3]:"disk.tfs";
-	if(start_disk(*name, *id)==1){
-		fprintf(stderr, "/!\ Erreur lors du démarrage du disque.\n");
+	if(start_disk(name, &id).error_id==1){
+		fprintf(stderr, "Erreur lors du démarrage du disque.\n");
 		return 1;
 	}
 	else{
 		printf("--- Démarrage du disque. ---\n");
 	  	block b;
 		uint32_t num = 0;
-		if(read_block(id, b, 0)==1){
-			fprintf(stderr, "/!\ Erreur lors de la lecture du block.\n");
+		if(read_block(id, b, 0).error_id==1){
+			fprintf(stderr, "Erreur lors de la lecture du block.\n");
 			return 1;
 		}
 		else{
@@ -40,8 +40,8 @@ int main(int argc, char *argv[]){
 				}
 			}
 			printf("Lecture terminée.\n");
-			if(stop_disk(*id)==1){
-				fprintf(stderr, "/!\ Erreur lors de l'arrêt du disque.\n");
+			if(stop_disk(id).error_id==1){
+				fprintf(stderr, "Erreur lors de l'arrêt du disque.\n");
 				return 1;
 			}
 			else{
