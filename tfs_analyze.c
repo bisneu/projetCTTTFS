@@ -13,7 +13,7 @@ int main(int argc, char *argv[]){
 	}
 	disk_id id;
 	char *name;
-	name = (argc==4)?argv[3]:"disk.tfs";
+	name = (argc==2)?argv[1]:"disk.tfs";
 	if(start_disk(name, &id).error_id==1){
 		fprintf(stderr, "Erreur lors du démarrage du disque.\n");
 		return 1;
@@ -21,6 +21,7 @@ int main(int argc, char *argv[]){
 	else{
 		printf("--- Démarrage du disque. ---\n");
 	  	block b;
+		b.block_block = malloc(1024);
 		if(read_block(id, b, 0).error_id==1){
 			fprintf(stderr, "Erreur lors de la lecture du block.\n");
 			return 1;

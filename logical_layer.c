@@ -138,7 +138,7 @@ uint32_t read_inblock(int indice, block b){
 	strcat(hexa3, strcat(hexa2, strcat(hexa1,hexa0)));
 	uint32_t final;
 	sscanf(hexa3, "%x", &final);
-	printf("Hexa : 0x%x | Deci : %d\n", final, final);
+	//printf("Hexa : 0x%x | Deci : %d\n", final, final);
 	free(hexa0);
 	free(hexa1);
 	free(hexa2);
@@ -189,9 +189,10 @@ error start_disk(char *name, disk_id *id){
 	if(exist_disk(name)==0){
 		id->disk_name = name;
 		id->disk_id = 0;
-		FILE *tmp = fopen(name,"+r");
+		FILE *tmp = NULL;
+		tmp = fopen(name,"r+");
 		if(tmp==NULL){
-			rep.error_desc = "Erreur lors de l'ouverture.";	
+			rep.error_desc = "Erreur lors de l'ouverture.";
 			return rep;
 		}
 		id->disk_file = tmp;
