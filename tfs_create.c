@@ -53,7 +53,7 @@ int main(int argc, char *argv[]){
 	closedir(currentDir);
 	printf("Nom attribué : %s\n", name);
 	FILE *file = fopen(name, "w+");
-	uint32_t *c = NULL;
+	uint8_t *c = NULL;
 	c = malloc(1024);
 	int i=0;
 	for(i=0; i<1024; i++){
