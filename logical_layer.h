@@ -13,7 +13,7 @@
 
 char convert_char(int i);
 void convertir_32(int decimal, char* hexa);
-void convertir_8(int decimal, char* hexa);
+void convertir_8(uint8_t decimal, char* hexa);
 uint8_t hexa_to_int(char* hex);
 uint8_t concat(char c, char c2);
 void convert_to_decimal(char* t, uint8_t* tab);
