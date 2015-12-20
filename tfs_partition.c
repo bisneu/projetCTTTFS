@@ -1,5 +1,6 @@
 #include "logical_layer.h"
 #include "endian.h"
+#include <unistd.h>
 
 /**
 * écrit dans le block l'element donné par elem à la position donnée par index 
@@ -63,7 +64,6 @@ int main(int argc, char **argv){
 	read_block(disk,first,0);
 	uint32_t taille_disque = read_inblock(0,first);	
 	uint32_t nbr_partitions = read_inblock(1,first);	
-	printf("mon nombre de parititon %d\n",nbr_partitions);
 	for(i=0; i<argc; i++){
 		mes_partitions[i]=0;				
 	}			

@@ -46,9 +46,10 @@ void convertir_32(int decimal, char* hexa){
 /*
 ** Convertit un int en une chaine de 2 caracteres hex
 */
-void convertir_8(int decimal, char* hexa){
+void convertir_8(uint8_t decimal, char* hexa){
 	hexa[0] = '0';
 	hexa[1] = '0';
+	hexa[2] = '\0';
 	int compteur=1;
 	uint8_t tmp = decimal;
 	while(tmp != 0){
@@ -122,10 +123,10 @@ void write_size_inblock(int size, FILE* file){
 ** Lit dans un block en little endian 32 bit
 */
 uint32_t read_inblock(int indice, block b){
-	char *hexa0 = malloc(sizeof(char)*2);
-	char *hexa1 = malloc(sizeof(char)*2);
-	char *hexa2 = malloc(sizeof(char)*2);
-	char *hexa3 = malloc(sizeof(char)*2);
+	char *hexa0 = malloc(sizeof(char)*3);
+	char *hexa1 = malloc(sizeof(char)*3);
+	char *hexa2 = malloc(sizeof(char)*3);
+	char *hexa3 = malloc(sizeof(char)*3);
 	uint8_t *decimal = malloc(sizeof(uint8_t)*4);
 	int i=0;
 	for(i=0;i<4;i++){
@@ -138,7 +139,7 @@ uint32_t read_inblock(int indice, block b){
 	strcat(hexa3, strcat(hexa2, strcat(hexa1,hexa0)));
 	uint32_t final;
 	sscanf(hexa3, "%x", &final);
-	//printf("Hexa : 0x%x | Deci : %d\n", final, final);
+	printf("Hexa : 0x%x | Deci : %d\n", final, final);
 	free(hexa0);
 	free(hexa1);
 	free(hexa2);
