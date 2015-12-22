@@ -13,8 +13,8 @@ int main(int argc, char **argv){
 					Vérification
 **********************************************************************************************/
 	if(argc<3){
-		printf("Nombre d'arguments incorrect (%d).\n", argc);
-		printf("./tfs_partition -p size [-p size] ... [name]\n");
+		fprintf(stderr, "Nombre d'arguments incorrect (%d).\n", argc);
+		fprintf(stderr, "./tfs_partition -p size [-p size] ... [name]\n");
 		return 1;
 	}
 	uint32_t mes_partitions[argc]; 	// tableau qui contiendra les partiions
@@ -25,19 +25,19 @@ int main(int argc, char **argv){
 	}
 	for(i=1; i<(argc-1); i++){
 		if(strcmp(argv[i],"-p")!=0){
-			printf("Option invalide : (%s).\n", argv[i]);
-			printf("./tfs_partition -p size [-p size] ... [name]\n");
+			fprintf(stderr, "Option invalide : (%s).\n", argv[i]);
+			fprintf(stderr, "./tfs_partition -p size [-p size] ... [name]\n");
 			return 1;
 		}
 		else {
-			if((i+1) >= (argc-1)){
-				fprintf(stderr,"Nombre attendu après \"-p\".\n");
-				printf("./tfs_partition -p size [-p size] ... [name]\n");
+			if((i+1) >= argc){
+				fprintf(stderr, "Nombre attendu après \"-p\".\n");
+				fprintf(stderr, "./tfs_partition -p size [-p size] ... [name]\n");
 				return 1;
 			}
 			else {
 				if(atoi(argv[i+1])<3){
-					fprintf(stderr,"Taille minimale d'une partition : 4 blocks.\n");
+					fprintf(stderr, "Taille minimale d'une partition : 4 blocks.\n");
 					return 1;
 				}
 				else {
@@ -49,9 +49,7 @@ int main(int argc, char **argv){
 		}
 	}
 	disk_id id;
-	char *name;
-	name = (strcmp(argv[argc-2], "-p"))?argv[argc]:"disk.tfs";
-	if(start_disk(name, &id).error_id==1){
+	if(start_disk(((strcmp(argv[argc-2], "-p")>0)?argv[argc-1]:"disk.tfs"), &id).error_id==1){
 		fprintf(stderr, "Erreur lors du démarrage du disque.\n");
 		return 1;
 	}

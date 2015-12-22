@@ -7,13 +7,13 @@
 */
 int main(int argc, char *argv[]){
 	if(argc!=1 && argc!=2){
-		printf("Nombre d'arguments incorrect (%d).\n", argc);
-		printf("./tfs_analyze [name]\n");
+		fprintf(stderr, "Nombre d'arguments incorrect (%d).\n", argc);
+		fprintf(stderr, "./tfs_analyze [name]\n");
 		return 1;
 	}
 	disk_id id;
 	char *name;
-	name = (argc==2)?argv[1]:"disk.tfs";
+	name = ((argc==2)?argv[1]:"disk.tfs");
 	if(start_disk(name, &id).error_id==1){
 		fprintf(stderr, "Erreur lors du démarrage du disque.\n");
 		return 1;

@@ -8,18 +8,16 @@
 */
 int main(int argc, char *argv[]){
 	if(argc!=3 && argc!=4){
-		printf("Nombre d'arguments incorrect (%d).\n", argc);
-		printf("./tfs_create -s size [name]\n");
+		fprintf(stderr, "Nombre d'arguments incorrect (%d).\n", argc);
+		fprintf(stderr, "./tfs_create -s size [name]\n");
 		return 1;
 	}
 	else if(strcmp(argv[1],"-s")!=0){
-		printf("Option invalide : (%s).\n", argv[1]);
-		printf("./tfs_create -s size [name]\n");
+		fprintf(stderr, "Option invalide : (%s).\n", argv[1]);
+		fprintf(stderr, "./tfs_create -s size [name]\n");
 		return 2;
 	}
-	printf("Taille 1 : %s\n", argv[2]);
 	int size = atoi(argv[2]);
-	printf("Taille 2 : %d\n", size);
 	DIR *currentDir=opendir(".");
 	struct dirent *entry=readdir(currentDir);
 	char *name;
