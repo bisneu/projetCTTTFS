@@ -119,6 +119,19 @@ void write_size_inblock(int size, FILE* file){
 }
 /* FIN */
 
+/**
+* écrit dans le block l'element donné par elem à la position donnée par index 
+*/
+void write_in_block(block b,int index, uint32_t elem){
+	int myindex = (index*4);
+	uint8_t *tab = malloc(sizeof(uint8_t)*4);
+	my_little_endian(elem,tab);
+	b.block_block[myindex] = tab[0];
+	b.block_block[myindex+1] = tab[1];				
+	b.block_block[myindex+2] = tab[2];				
+	b.block_block[myindex+3] = tab[3];				
+}
+
 /*
 ** Lit dans un block en little endian 32 bit
 */
@@ -145,6 +158,16 @@ uint32_t read_inblock(int indice, block b){
 	free(hexa2);
 	free(hexa3);
 	return final;
+}
+
+uint32_t total_partition(block b, uint32_t nbr_partition){
+	int i=0;
+	uint32_t total = 0; 
+	for(i=0; i<nbr_partition; i++){
+		total = total + read_inblock((2+i),b);				
+	}
+	printf("%d\n",total);
+	return total;	
 }
 
 /*
