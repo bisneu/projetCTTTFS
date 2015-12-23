@@ -21,12 +21,43 @@ int main(int argc, char **argv){
 		fprintf(stderr, "./tfs_format -p partition -mf file_count [disk]\n");
 		return 1;
 	}
-	else if(atoi(argv[2])<0){
+	else if(atoi(argv[2])<1){
 		fprintf(stderr, "Nombre attendu après \"-p\".\n");
+		fprintf(stderr, "./tfs_format -p partition -mf file_count [disk]\n");
+		return 1;
+	}
+	else if(atoi(argv[4])<1){
+		fprintf(stderr, "Nombre attendu après \"-mf\".\n");
 		fprintf(stderr, "./tfs_format -p partition -mf file_count [disk]\n");
 		return 1;
 	}
 	char *name;
 	name = ((argc==6)?argv[5]:"disk.tfs");
-
+	disk_id id;
+	if(start_disk(name, &id).error_id==1){
+		fprintf(stderr, "Erreur lors du démarrage du disque.\n");
+		return 1;
+	}
+	printf("--- Démarrage du disque. ---\n");
+  	block b;
+	b.block_block = malloc(1024);
+	if(read_block(id, b, 0).error_id==1){
+		fprintf(stderr, "Erreur lors de la lecture du block.\n");
+		return 1;
+	}
+	printf("Formatage du disque en cours.\n");
+/*------------------------------------ DEBUT FORMATAGE ------------------------------------*/
+	
+	
+	
+/*------------------------------------  FIN FORMATAGE  ------------------------------------*/
+	printf("Formatage terminé.\n");
+	if(stop_disk(id).error_id==1){
+		fprintf(stderr, "Erreur lors de l'arrêt du disque.\n");
+		return 1;
+	}
+	else{
+		printf("--- Arrêt du disque. ---\n");
+	}
+	return 0;
 }
