@@ -122,7 +122,7 @@ void write_size_inblock(int size, FILE* file){
 /**
 * écrit dans le block l'element donné par elem à la position donnée par index 
 */
-void write_in_block(block b,int index, uint32_t elem){
+void write_inblock(block b,int index, uint32_t elem){
 	int myindex = (index*4);
 	uint8_t *tab = malloc(sizeof(uint8_t)*4);
 	my_little_endian(elem,tab);

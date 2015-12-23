@@ -19,7 +19,7 @@ uint8_t concat(char c, char c2);
 void convert_to_decimal(char* t, uint8_t* tab);
 void my_little_endian(uint32_t elem, uint8_t *tab);
 void write_size_inblock(int size, FILE* file);
-void write_in_block(block b,int index, uint32_t elem);
+void write_inblock(block b,int index, uint32_t elem);
 uint32_t read_inblock(int indice, block b);
 uint32_t total_partition(block b,uint32_t nbr_partition);
 int exist_disk(char *name);
