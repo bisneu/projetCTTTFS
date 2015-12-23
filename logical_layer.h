@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <endian.h>
 #include <stdlib.h>
-#include <stdlib.h>
+#include <unistd.h>
 #include <stdint.h>
 
 char convert_char(int i);

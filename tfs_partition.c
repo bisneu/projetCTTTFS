@@ -1,12 +1,9 @@
 #include "logical_layer.h"
-#include <endian.h>
-#include <unistd.h>
 
 /*
 ** ./tfs_partition -p size [size] ... [name]
 ** Permet de partitionner l'espace physique du disque
 ** en paquets de blocs.
-** read_size_inblock()
 */
 int main(int argc, char **argv){
 /*********************************************************************************************
