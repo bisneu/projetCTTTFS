@@ -81,9 +81,9 @@ int main(int argc, char **argv){
 	else{
 		int j=0;
 		for(j=0; j<compteur;j++){
-			write_in_block(b,(2+nbr_partitions+j),mes_partitions[j]);		
+			write_inblock(b,(2+nbr_partitions+j),mes_partitions[j]);		
 		}
-		write_in_block(b,1,(nbr_partitions+compteur));
+		write_inblock(b,1,(nbr_partitions+compteur));
 		write_block(id,b,0);
 	}		
 				
