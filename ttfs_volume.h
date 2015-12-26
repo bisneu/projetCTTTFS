@@ -4,11 +4,11 @@
 #define TFS_DIRECTORY 1
 #define TFS_PSEUDO 2
 #define TFS_DATE 0
+#define TFS_DISK 1
 #include "logical_layer.h"
-#define TFS_DISK 1 
 
 void initiate_description_block(block block_zero, block b,int partition,int nbr_fic);
 
-int frist_block_partition(block block_zero, int partition); 
+int first_block_partition(block block_zero, int partition); 
 
 

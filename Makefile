@@ -1,7 +1,7 @@
-CC=cc
+CC=gcc
 CFLAGS=-Wall
 
-all: tfs_create tfs_partition tfs_analyze
+all: tfs_create tfs_partition tfs_analyze tfs_format
 
 tfs_create: logical_layer.o physical_layer.o tfs_create.o
 	$(CC) -o $@ $^

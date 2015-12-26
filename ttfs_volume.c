@@ -1,7 +1,4 @@
 #include "ttfs_volume.h"
-#include "logical_layer.h"
-
-
 
 void initiate_description_block(block block_zero, block b,int partition,int nbr_fic){
 	write_inblock(b,0,TTTFS_MAGIC_NUMBER);
