@@ -58,7 +58,9 @@ int main(int argc, char **argv){
 		return 1;
 	}
 	initiate_description_block(b,b2,atoi(argv[2]),atoi(argv[4]));
-	write_block(id,b2,first_block_partition(b,atoi(argv[4])));	
+	write_block(id,b2,first_block_partition(b,atoi(argv[4])));
+	free(b.block_block);	
+	free(b2.block_block);	
 /*------------------------------------  FIN FORMATAGE  ------------------------------------*/
 	printf("Formatage terminé.\n");
 	if(stop_disk(id).error_id==1){
