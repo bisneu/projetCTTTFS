@@ -1,6 +1,4 @@
 #include "ttfs_volume.h"
-#include "logical_layer.h"
-#include <stdlib.h>
 /*
 ** ./tfs_format -p partition -mf file_count [disk]
 ** Permet de formater une partition du disque
@@ -44,6 +42,10 @@ int main(int argc, char **argv){
 	b.block_block = malloc(1024);
 	if(read_block(id, b, 0).error_id==1){
 		fprintf(stderr, "Erreur lors de la lecture du block.\n");
+		return 1;
+	}
+	if(read_inblock(1,b)<argv[3]){
+		fprintf(stderr, "Erreur, partition %d introuvable.\n", argv[3]);
 		return 1;
 	}
 	printf("Formatage du disque en cours.\n");
