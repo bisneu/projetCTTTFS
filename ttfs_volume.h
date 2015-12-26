@@ -8,7 +8,8 @@
 #include "logical_layer.h"
 
 void initiate_description_block(block block_zero, block b,int partition,int nbr_fic);
-
 int first_block_partition(block block_zero, int partition); 
+void initiate_file_table(disk_id id ,block block_zero,int nbr_fic,int partition);
+void initiate_block(block b, int n);
 
 
