@@ -7,6 +7,18 @@
 #define TFS_DISK 1
 #include "logical_layer.h"
 
+typedef struct free_entry free_entry;
+struct free_entry{
+	uint32_t tfs_size;
+	uint32_t tfs_type;
+	uint32_t tfs_subtype;
+	uint32_t *tfs_direct;
+	uint32_t tfs_indirect1;
+	uint32_t tfs_indirect2;
+	uint32_t tfs_next_free;
+}
+
+
 void initiate_description_block(block block_zero, block b,int partition,int nbr_fic);
 int first_block_partition(block block_zero, int partition); 
 void initiate_file_table(disk_id id ,block block_zero,int nbr_fic,int partition);
