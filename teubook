@@ -1,1 +1,9 @@
 - régler le probleme de chemin dans toutes les commandes 
+- faire le chainages des entrées de table 
+- faire le chainage des block libres
+- pour tfs_format faire une verification par rapport à la taille de la partition et le nombre de fichier
+- initialisation des data blocks
+
+
+- Au maximum 1 block contient 1 fichier
+- il faudra revoir les testes dans tfs_format , tfs_partition (taille occupé par un fichier etc)     
