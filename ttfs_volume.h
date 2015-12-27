@@ -5,6 +5,7 @@
 #define TFS_PSEUDO 2
 #define TFS_DATE 0
 #define TFS_DISK 1
+
 #include "logical_layer.h"
 
 typedef struct free_entry free_entry;
@@ -16,12 +17,15 @@ struct free_entry{
 	uint32_t tfs_indirect1;
 	uint32_t tfs_indirect2;
 	uint32_t tfs_next_free;
-}
-
+};
 
 void initiate_description_block(block block_zero, block b,int partition,int nbr_fic);
-int first_block_partition(block block_zero, int partition); 
+int first_block_partition(block block_zero, int partition);
 void initiate_file_table(disk_id id ,block block_zero,int nbr_fic,int partition);
 void initiate_block(block b, int n);
+int add_free_block(disk_id id, int description_block);
+int remove_free_block(disk_id id, int description_block);
+int add_free_entry(disk_id id, int description_block);
+int remove_free_entry(disk_id id, int description_block);
 
 

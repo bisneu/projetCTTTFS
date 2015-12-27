@@ -1,10 +1,8 @@
 #include "ttfs_volume.h"
 
-
-
-/**
- * Initialise le block de description d'une partition 
- */
+/*
+** Initialise le block de description d'une partition 
+*/
 void initiate_description_block(block block_zero, block b,int partition,int nbr_fic){
 	write_inblock(b,0,TTTFS_MAGIC_NUMBER); // le magic number 
 	write_inblock(b,1,TTTFS_VOLUME_BLOCK_SIZE); // taille d'un block 
@@ -19,9 +17,9 @@ void initiate_description_block(block block_zero, block b,int partition,int nbr_
 	// rajouter le numero du premier fichier libre du volume ....
 }
 
-/**
- * Renvoie le premier block d'une partition 
- */
+/*
+** Renvoie le premier block d'une partition 
+*/
 int  first_block_partition(block block_zero, int partition){
 	uint32_t compteur = 1 ;
 	int i = 0; 
@@ -31,9 +29,9 @@ int  first_block_partition(block block_zero, int partition){
 	return compteur;
 }
 
-/**
- * Initialise à 0 un block donnée 
- */
+/*
+** Initialise à 0 un block donnée 
+*/
 void initiate_block(block b,int n){
 	int i = 0;
 	for(i=0; i<n ; i++){
@@ -41,9 +39,9 @@ void initiate_block(block b,int n){
 	}
 }
 
-/**
- * Initialise la table des fichiers d'une partition
- */
+/*
+** Initialise la table des fichiers d'une partition
+*/
 void initiate_file_table(disk_id id,block block_zero,int nbr_fic,int partition){
 	int block_partition = first_block_partition(block_zero,partition);
 	block b;
@@ -86,3 +84,88 @@ void initiate_file_table(disk_id id,block block_zero,int nbr_fic,int partition){
 	free(b.block_block);	
 }
 
+/*
+** Ajoute un bloc à la liste des blocs libres
+*/
+int add_free_block(disk_id id, int description_block){
+  	block b;
+	b.block_block = malloc(1024);
+	if(read_block(id, b, description_block).error_id==1){
+		fprintf(stderr, "Erreur lors de la lecture du block.\n");
+		return 1;
+	}
+	uint32_t i = read_inblock(3,b)+1;
+	uint32_t j = read_inblock(4,b)-1;
+	write_inblock(b,3,i); // i = TTTFS_VOLUME_FREE_BLOCK_COUNT ++
+	write_inblock(b,4,j); // j = TTTFS_VOLUME_FIRST_FREE_BLOCK --
+	write_block(id, b, description_block);
+	return 0;
+}
+
+/*
+** Supprime un bloc de la liste des blocs libres
+*/
+int remove_free_block(disk_id id, int description_block){
+  	block b;
+	b.block_block = malloc(1024);
+	if(read_block(id, b, description_block).error_id==1){
+		fprintf(stderr, "Erreur lors de la lecture du block.\n");
+		return 1;
+	}
+	uint32_t i = read_inblock(3,b)-1;
+	uint32_t j = read_inblock(4,b)+1;
+	write_inblock(b,3,i); // i = TTTFS_VOLUME_FREE_BLOCK_COUNT --
+	write_inblock(b,4,j); // j = TTTFS_VOLUME_FIRST_FREE_BLOCK ++
+	write_block(id, b, description_block);
+	return 0;
+}
+
+/*
+** Ajoute une entrée de répertoire à la liste des entrées libres
+*/
+int add_free_entry(disk_id id, int description_block){
+  	block b;
+	b.block_block = malloc(1024);
+	if(read_block(id, b, description_block).error_id==1){
+		fprintf(stderr, "Erreur lors de la lecture du block.\n");
+		return 1;
+	}
+	uint32_t i = read_inblock(6,b)+1;
+	uint32_t j = read_inblock(7,b)-1;
+	write_inblock(b,6,i); // i = TTTFS_VOLUME_FREE_FILE_COUNT ++
+	write_inblock(b,7,j); // j = TTTFS_VOLUME_FIRST_FREE_FILE --
+	write_block(id, b, description_block);
+	return 0;
+}
+
+/*
+** Supprime une entrée de répertoire de la liste des entrées libres
+*/
+int remove_free_entry(disk_id id, int description_block){
+  	block b;
+	b.block_block = malloc(1024);
+	if(read_block(id, b, description_block).error_id==1){
+		fprintf(stderr, "Erreur lors de la lecture du block.\n");
+		return 1;
+	}
+	uint32_t i = read_inblock(6,b)-1;
+	uint32_t j = read_inblock(7,b)+1;
+	write_inblock(b,6,i); // i = TTTFS_VOLUME_FREE_FILE_COUNT --
+	write_inblock(b,7,j); // j = TTTFS_VOLUME_FIRST_FREE_FILE ++
+	write_block(id, b, description_block);
+	return 0;
+}
+
+/*
+** Ajoute un bloc à la liste des blocs d’un fichier
+*/
+int add_file_block(){
+	return 0;
+}
+
+/*
+** Supprime un bloc de la liste des blocs d’un fichier
+*/
+int remove_file_block(){
+	return 0;
+}

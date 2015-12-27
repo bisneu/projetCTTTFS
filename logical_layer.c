@@ -166,7 +166,6 @@ uint32_t total_partition(block b, uint32_t nbr_partition){
 	for(i=0; i<nbr_partition; i++){
 		total = total + read_inblock((2+i),b);				
 	}
-	printf("%d\n",total);
 	return total;	
 }
 
