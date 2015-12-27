@@ -7,3 +7,15 @@
 
 - Au maximum 1 block contient 1 fichier
 - il faudra revoir les testes dans tfs_format , tfs_partition (taille occupé par un fichier etc)     
+
+28/12 :
+Bisneu : exist_file + chainage de fichier
+Ozu : revoir/rajouter des tests pour les fonctions (nb partitions mini, etc...)
+
+29/12 :
+Bisneu : chainage
+Ozu : répertoire
+
+30/12 : finir API 1 + commencer API 2
+
+31/12 : check up
