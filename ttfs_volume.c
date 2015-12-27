@@ -76,9 +76,10 @@ void initiate_file_table(disk_id id,block block_zero,int nbr_fic,int partition){
 				compteur2 = compteur2+1;
 				break;
 			}
-			else if(i==15){
+			else if(i==14){
 				write_block(id,b,block_partition+compteur2);
 				compteur2 = compteur2+1;
+				initiate_block(b,1024);
 			}	
 		}
 	}
