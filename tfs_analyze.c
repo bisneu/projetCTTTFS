@@ -27,7 +27,6 @@ int main(int argc, char *argv[]){
 	}
 	uint32_t size = read_inblock(0,b);
 	uint32_t nb_part = read_inblock(1,b);
-	nb_part = read_inblock(1,b);
 	printf("Lecture des informations.\n");
 	printf(" > Nom du disque : %s\n", name);
 	printf(" > Nombre de blocks : %d\n", size);
