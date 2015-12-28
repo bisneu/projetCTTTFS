@@ -1,5 +1,9 @@
 #include "logical_layer.h"
 
+/*
+** Permet d'obtenir un tableau contenant la position du block
+** de description de chaque partition du disque.
+*/
 int pos_blockDesc(disk_id id, uint32_t* tab){
 	block b;
 	b.block_block = malloc(1024);
