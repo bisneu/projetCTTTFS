@@ -11,6 +11,14 @@
 28/12 :
 Bisneu : exist_file + chainage de fichier
 Ozu : revoir/rajouter des tests pour les fonctions (nb partitions mini, etc...)
+Verification existence formatage
+
+* tfs_create.c
+* tfs_partition.c
+* tfs_format.c
+* tfs_analyze.c
+* logical_layer.c
+* logical_layer.h
 
 29/12 :
 Bisneu : chainage
@@ -18,4 +26,4 @@ Ozu : répertoire
 
 30/12 : finir API 1 + commencer API 2
 
-31/12 : check up
+31/12 : check up + Attention aux arrets de disk lors d'une erreur !!!!
