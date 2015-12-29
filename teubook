@@ -27,6 +27,10 @@ tfs_analyze.c : rajouter un test pour savoir si la partition est formatée
 tfs_create.c ; tfs_partition.c ; tfs_format.c : vérifier si les nombres dépassent 2^32
 
 30/12 : finir API 1 + commencer API 2
+get_first_free_block
+get_first_free_file
+get_last_free_block
+get_last_free_file
 
 31/12 : check up + Attention aux arrets de disk lors d'une erreur !!!! + vérifier malloc & free
 
