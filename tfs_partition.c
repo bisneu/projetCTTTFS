@@ -1,7 +1,7 @@
 #include "logical_layer.h"
 
 /*
-** ./tfs_partition -p size [size] ... [name]
+** ./tfs_partition -p size [-p size] ... [name]
 ** Permet de partitionner l'espace physique du disque
 ** en paquets de blocs.
 */
@@ -33,8 +33,8 @@ int main(int argc, char **argv){
 				return 1;
 			}
 			else {
-				if(atoi(argv[i+1])<3){
-					fprintf(stderr, "Taille minimale d'une partition : 4 blocks.\n");
+				if(atoi(argv[i+1])<9){
+					fprintf(stderr, "Taille minimale d'une partition : 9 blocks.\n");
 					return 1;
 				}
 				else {

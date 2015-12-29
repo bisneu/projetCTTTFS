@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <stdint.h>
 
+int pos_blockDesc(disk_id id, uint32_t* tab);
 char convert_char(int i);
 void convertir_32(int decimal, char* hexa);
 void convertir_8(uint8_t decimal, char* hexa);

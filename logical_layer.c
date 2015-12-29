@@ -1,5 +1,25 @@
 #include "logical_layer.h"
 
+/*
+** Permet d'obtenir un tableau contenant la position du block
+** de description de chaque partition du disque.
+*/
+int pos_blockDesc(disk_id id, uint32_t* tab){
+	block b;
+	b.block_block = malloc(1024);
+	if(read_block(id, b, 0).error_id==1){
+		fprintf(stderr, "Erreur lors de la lecture du block.\n");
+		return 1;
+	}
+	tab[0] = 1;
+	int i = 1;
+	for(i=1; i<sizeof(tab); i++){
+		tab[i] = tab[i-1] + read_inblock(i+1,b);
+	}
+	free(b.block_block);
+	return 0;
+}
+
 /* DEBUT fonction permetant à l écriture dans un block en little endian 32 bit */
 
 /*

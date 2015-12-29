@@ -17,6 +17,16 @@ int main(int argc, char *argv[]){
 		fprintf(stderr, "./tfs_create -s size [name]\n");
 		return 2;
 	}
+	else if(atoi(argv[2])<1){
+				fprintf(stderr, "Nombre attendu après \"-s\".\n");
+		fprintf(stderr, "./tfs_create -s size [name]\n");
+		return 1;
+	}
+	else if(atoi(argv[2])<10){
+		fprintf(stderr, "Taille insufisante : minimum 10 Blocks.\n");
+		fprintf(stderr, "./tfs_create -s size [name]\n");
+		return 1;
+	}
 	int size = atoi(argv[2]);
 	DIR *currentDir=opendir(".");
 	struct dirent *entry=readdir(currentDir);
