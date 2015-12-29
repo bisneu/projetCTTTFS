@@ -18,7 +18,12 @@ int main(int argc, char *argv[]){
 		return 2;
 	}
 	else if(atoi(argv[2])<1){
-				fprintf(stderr, "Nombre attendu après \"-s\".\n");
+		fprintf(stderr, "Nombre attendu après \"-s\".\n");
+		fprintf(stderr, "./tfs_create -s size [name]\n");
+		return 1;
+	}
+	else if(atoi(argv[2])>4294967295){
+		fprintf(stderr, "Taille maximale d'une partition : 4294967295 blocks.\n");
 		fprintf(stderr, "./tfs_create -s size [name]\n");
 		return 1;
 	}

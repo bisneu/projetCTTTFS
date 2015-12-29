@@ -35,6 +35,12 @@ int main(int argc, char **argv){
 			else {
 				if(atoi(argv[i+1])<9){
 					fprintf(stderr, "Taille minimale d'une partition : 9 blocks.\n");
+					fprintf(stderr, "./tfs_partition -p size [-p size] ... [name]\n");
+					return 1;
+				}
+				else if(atoi(argv[i+1])>4294967295){
+					fprintf(stderr, "Taille maximale d'une partition : 4294967295 blocks.\n");
+					fprintf(stderr, "./tfs_partition -p size [-p size] ... [name]\n");
 					return 1;
 				}
 				else {

@@ -26,8 +26,18 @@ int main(int argc, char **argv){
 		fprintf(stderr, "./tfs_format -p partition -mf file_count [disk]\n");
 		return 1;
 	}
+	else if(atoi(argv[2])>4294967295){
+		fprintf(stderr, "Taille maximale d'une partition : 4294967295 blocks.\n");
+		fprintf(stderr, "./tfs_format -p partition -mf file_count [disk]\n");
+		return 1;
+	}
 	else if(atoi(argv[4])<1){
 		fprintf(stderr, "Nombre attendu après \"-mf\".\n");
+		fprintf(stderr, "./tfs_format -p partition -mf file_count [disk]\n");
+		return 1;
+	}
+	else if(atoi(argv[4])>4294967295){
+		fprintf(stderr, "Taille maximale d'une partition : 4294967295 blocks.\n");
 		fprintf(stderr, "./tfs_format -p partition -mf file_count [disk]\n");
 		return 1;
 	}
