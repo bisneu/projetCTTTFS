@@ -23,7 +23,17 @@ Verification existence formatage
 29/12 :
 Bisneu : chainage
 Ozu : répertoire
+tfs_analyze.c : rajouter un test pour savoir si la partition est formatée
+tfs_create.c ; tfs_partition.c ; tfs_format.c : vérifier si les nombres dépassent 2^32
 
 30/12 : finir API 1 + commencer API 2
 
-31/12 : check up + Attention aux arrets de disk lors d'une erreur !!!!
+31/12 : check up + Attention aux arrets de disk lors d'une erreur !!!! + vérifier malloc & free
+
+01/01 : commencer les commandes + bibli dynamique + test espace disk suffisant
+
+
+
+
+
+
