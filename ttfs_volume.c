@@ -3,7 +3,7 @@
 /*
 ** Initialise le block de description d'une partition 
 */
-void initiate_description_block(block block_zero, block b,int partition,int nbr_fic){
+void initiate_description_block(block block_zero, block b, uint32_t partition,uint32_t nbr_fic){
 	write_inblock(b,0,TTTFS_MAGIC_NUMBER); // le magic number 
 	write_inblock(b,1,TTTFS_VOLUME_BLOCK_SIZE); // taille d'un block 
 	uint32_t taille_partition = read_inblock(1+partition,block_zero); 
@@ -14,13 +14,13 @@ void initiate_description_block(block block_zero, block b,int partition,int nbr_
 	write_inblock(b,4,(tmp+3)); // le numéro du premier block libre  
 	write_inblock(b,5,nbr_fic); // nombre total de fichiers dans ce volume
 	write_inblock(b,6,nbr_fic); // nombre de fichiers actuellement libre
-	// rajouter le numero du premier fichier libre du volume ....
+	write_inblock(b,7,1); // rajouter le numero du premier fichier libre du volume ....
 }
 
 /*
 ** Renvoie le premier block d'une partition 
 */
-int  first_block_partition(block block_zero, int partition){
+uint32_t  first_block_partition(block block_zero, uint32_t partition){
 	uint32_t compteur = 1 ;
 	int i = 0; 
 	for(i = 1; i<partition; i++){
@@ -43,10 +43,10 @@ void initiate_block(block b,int n){
 ** Initialise la table des fichiers d'une partition
 */
 void initiate_file_table(disk_id id,block block_zero,int nbr_fic,int partition){
-	int block_partition = first_block_partition(block_zero,partition);
+	uint32_t block_partition = first_block_partition(block_zero,partition);
 	block b;
-	int compteur=0;
-	int compteur2=1;
+	uint32_t compteur=0;
+	uint32_t compteur2=1;
 	b.block_block = malloc(1024);
 	initiate_block(b,1024);
 	int i = 0 ;
@@ -67,9 +67,12 @@ void initiate_file_table(disk_id id,block block_zero,int nbr_fic,int partition){
 			write_inblock(b,12+(i*16),0);
 			write_inblock(b,13+(i*16),0);
 			write_inblock(b,14+(i*16),0);
-			write_inblock(b,15+(i*16),i+1); // nombre de fichier  
 			compteur = compteur+1;
+			if(compteur < nbr_fic){
+				write_inblock(b,15+(i*16),compteur+1); // nombre de fichier 
+			}
 			if(compteur == nbr_fic){ 
+				write_inblock(b,15+(i*16),compteur); // nombre de fichier 
 				write_block(id,b,block_partition+compteur2);
 				compteur2 = compteur2+1;
 				break;

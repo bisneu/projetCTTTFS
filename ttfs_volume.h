@@ -19,8 +19,8 @@ struct free_entry{
 	uint32_t tfs_next_free;
 };
 
-void initiate_description_block(block block_zero, block b,int partition,int nbr_fic);
-int first_block_partition(block block_zero, int partition);
+void initiate_description_block(block block_zero, block b, uint32_t partition,uint32_t nbr_fic);
+uint32_t first_block_partition(block block_zero, uint32_t partition);
 void initiate_file_table(disk_id id ,block block_zero,int nbr_fic,int partition);
 void initiate_block(block b, int n);
 int add_free_block(disk_id id, int description_block);
