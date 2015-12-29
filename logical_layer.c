@@ -1,6 +1,129 @@
 #include "logical_layer.h"
 
 /*
+** vérifie si le fichier dans le dossier donnée en argument existe
+*/
+int verif_file(char *str, DIR *cur_dir){
+	struct dirent *entry = readdir(cur_dir);	
+	do{
+		if(strcmp(str,entry->d_name)==0){
+			if(((entry->d_type)==DT_UNKNOWN) || (entry->d_type)==DT_REG){	
+				return 0;
+			}
+			fprintf(stderr,"Ce n'est pas un fichier\n");
+			return 1;
+		}
+		entry = readdir(cur_dir);	
+	}while(entry!=NULL);
+	fprintf(stderr,"Le fichier n'existe pas\n");
+	return 1;
+}
+
+/*
+** vérifie si le dossier dans le dossier donnée en argument existe
+*/
+int verif_rep(char *str, DIR *cur_dir){
+	struct dirent *entry = readdir(cur_dir);	
+	do{
+		if(strcmp(str,entry->d_name)==0){
+			if((entry->d_type)==DT_DIR){	
+				return 0;
+			}
+			fprintf(stderr,"Ce n'est pas un répertoire\n");
+			return 1;
+		}
+		entry = readdir(cur_dir);	
+	}while(entry!=NULL);
+	fprintf(stderr,"Le répertoire n'existe pas\n");
+	return 1;
+}
+
+
+/*
+** compte les séprateurs dans \ dans une chaine de caractere donnée  
+*/
+int  compte_separateur(char* str){	
+	int i=0;
+	int compteur=0;
+	while(*(str+i) != '\0'){
+		if( *(str+i) == '/'){
+			compteur++;
+		}
+		i++;
+	}
+	return compteur;	
+}
+
+/*
+** renvoie un bout de chemin d'une adresse donnée en argument indice qui commence à 0  
+*/
+char* bout_chemin(char *str,int del){
+	int i=0;
+	int j=0;
+	int compteur = 0;
+	char *str_tmp = malloc(strlen(str)*sizeof(char));
+	for(i=0; i<strlen(str); i++){
+		*(str_tmp+i) = '\0';
+	}
+	i=0;
+	while(*(str+i) != '\0'){
+		if(*(str+i)=='/'){
+			compteur ++;
+		}
+		else if((compteur > del-1)&&(compteur<=del)){
+			*(str_tmp+j) = *(str+i);
+			j++;
+		}
+		i++;	
+	}
+	return str_tmp;		
+}
+
+/*
+** permet d'avoir le chemin d'un dossier  
+*/
+void avoir_le_dossier(char* str,char* ret){
+	int nombre_slash = compte_separateur(str);
+	int i=0;
+	for(i=0; i<=nombre_slash-1; i++ ){
+		if(i!=0){
+			strcat(strcat(ret,"/"),bout_chemin(str,i));	
+		}
+		else {
+			strcat(ret,bout_chemin(str,i));
+		}
+	}
+}
+
+/*
+** verifie qu'un fichier est correcte  
+*/
+int rec_open_file(char *str, int i, DIR *cur_dir){
+	char *tmp = bout_chemin(str,i);
+	if(i>=compte_separateur(str)){
+		char *ret = malloc(sizeof(char)*256);
+		avoir_le_dossier(str,ret);
+		cur_dir = opendir(ret);
+		if(verif_file(tmp,cur_dir)==0){
+			free(ret);
+			return 0;
+		}
+		else { 
+			free(ret);
+			return 1; 
+		}	
+	}
+	else {
+		if(verif_rep(tmp,cur_dir) == 0){
+			cur_dir = opendir(tmp);	
+			return rec_open_file(str,i+1,cur_dir);			
+		} 
+		else return 1;
+	}	
+}
+
+
+/*
 ** Permet d'obtenir un tableau contenant la position du block
 ** de description de chaque partition du disque.
 */
@@ -189,20 +312,38 @@ uint32_t total_partition(block b, uint32_t nbr_partition){
 	return total;	
 }
 
+void enleve_le_slash(char* str){
+	if(*(str+(strlen(str)-1))=='/'){
+		*(str+(strlen(str)-1)) = '\0';
+	}	
+}
+
 /*
 ** Permet de vérifier l'existence du fichier nommé name.
 */
 int exist_disk(char *name){
+	int nombre_separateur = compte_separateur(name);
+	enleve_le_slash(name);
 	DIR *currentDir=opendir(".");
-	struct dirent *entry=readdir(currentDir);
-	do{
-		if(strcmp(name,entry->d_name)==0){
+	if( nombre_separateur >0){
+		if(rec_open_file(name,0,currentDir)==0){
+			closedir(currentDir);	
 			return 0;
 		}
-		entry=readdir(currentDir);
-	}while(entry!=NULL);
-	closedir(currentDir);	
-	return 1;
+		closedir(currentDir);	
+		return 1;
+	}
+	else {
+ 		struct dirent *entry=readdir(currentDir);
+		do{
+  			if(strcmp(name,entry->d_name)==0){
+				return 0;
+			}
+			entry=readdir(currentDir);
+		}while(entry!=NULL);
+		closedir(currentDir); 
+		return 1;
+	}	
 }
 
 /*
@@ -231,7 +372,7 @@ error start_disk(char *name, disk_id *id){
 	rep.error_id=1;
 	if(exist_disk(name)==0){
 		id->disk_name = name;
-		id->disk_id = 0;
+		id->disk_id = 0; // a revoir les ids du disque
 		FILE *tmp = NULL;
 		tmp = fopen(name,"r+");
 		if(tmp==NULL){
