@@ -31,6 +31,7 @@ get_first_free_block
 get_first_free_file
 get_last_free_block
 get_last_free_file
+repertoire
 
 31/12 : check up + Attention aux arrets de disk lors d'une erreur !!!! + vérifier malloc & free
 
