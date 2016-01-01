@@ -172,3 +172,30 @@ int add_file_block(){
 int remove_file_block(){
 	return 0;
 }
+
+void initiate_data_block(disk_id id,uint32_t partition){
+	block zero;
+	block description; 
+	block tmp; 
+	zero.block_block = malloc(1024);
+	description.block_block = malloc(1024);
+	tmp.block_block = malloc(1024);
+	read_block(id,zero,0);
+	int block_partition_zero = first_block_partition(description,partition);	
+	read_block(id,description,block_partition_zero);
+	int first_free_block = read_inblock(4,description);
+	int total_free_block = read_inblock(3,description);
+	int i = 0;
+	for(i=0; i<total_free_block; i++){
+		read_block(id,tmp,block_partition_zero+first_free_block+i);
+		if(i!=(total_free_block-1)){
+			write_inblock(tmp,255,i+1);
+		}
+		else {
+			write_inblock(tmp,255,i);
+		}
+		write_block(id,tmp,block_partition_zero+first_free_block+i);				
+	}
+}
+
+

@@ -89,6 +89,7 @@ int main(int argc, char **argv){
 	initiate_description_block(b,b2,atoi(argv[2]),atoi(argv[4]));
 	write_block(id,b2,first_block_partition(b,atoi(argv[2])));
 	initiate_file_table(id,b,atoi(argv[4]),atoi(argv[2]));
+	initiate_data_block(id,atoi(argv[2]));
 	free(b.block_block);	
 	free(b2.block_block);	
 /*------------------------------------  FIN FORMATAGE  ------------------------------------*/

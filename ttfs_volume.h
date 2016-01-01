@@ -27,5 +27,6 @@ int add_free_block(disk_id id, int description_block);
 int remove_free_block(disk_id id, int description_block);
 int add_free_entry(disk_id id, int description_block);
 int remove_free_entry(disk_id id, int description_block);
+void initiate_data_block(disk_id id,uint32_t partition);
 
 
