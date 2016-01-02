@@ -63,13 +63,10 @@ int main(int argc, char **argv){
 		fprintf(stderr, "Erreur, la partation ne peux supporter un tel nombre de fichier max.\n");
 		return 1;
 	}
-	uint32_t* tab;
-	tab = malloc(read_inblock(1,b)*sizeof(uint32_t));
-	pos_blockDesc(id, tab);
 
 	block desc_b;
 	desc_b.block_block = malloc(1024);
-	if(read_block(id, desc_b, tab[atoi(argv[2])-1]).error_id==1){
+	if(read_block(id, desc_b, first_block_partition(b,atoi(argv[2]))).error_id==1){
 		fprintf(stderr, "Erreur lors de la lecture du block de description de la partition en attente de formatage.\n");
 		return 1;
 	}
