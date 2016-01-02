@@ -184,7 +184,7 @@ void initiate_data_block(disk_id id,uint32_t partition){
 	description.block_block = malloc(1024);
 	tmp.block_block = malloc(1024);
 	read_block(id,zero,0);
-	int block_partition_zero = first_block_partition(zero,partition);	
+	int block_partition_zero = get_description_block(zero,partition);	
 	read_block(id,description,block_partition_zero);
 	int first_free_block = read_inblock(4,description);
 	int total_free_block = read_inblock(3,description);
@@ -240,42 +240,53 @@ uint32_t get_last_free_block(disk_id id, uint32_t id_description_block){
 /*
 ** Renvoie la première entrée libre
 */
-free_entry get_first_free_file(disk_id id, uint32_t description_block){
+free_entry get_first_free_file(disk_id id, uint32_t id_description_block){
 	free_entry first_free_entry;
 	block b;
 	b.block_block = malloc(1024);
-	if(read_block(id, b, description_block).error_id==1){
+	if(read_block(id, b, id_description_block).error_id==1){
 		fprintf(stderr, "Erreur lors de la lecture du block.\n");
-		return 1;
+		return NULL;
 	}
-	first_free_entry.tfs_next_free = get_next_free_file();
-	read_inblock(7,b) = ;
+	first_free_entry.tfs_next_free = read_inblock(7,b);
 	return first_free_entry;
 }
 
 
-/** Pas fini ! **/
 /*
 ** Renvoie la dernière entrée libre
 */
-uint32_t get_last_free_file(disk_id id, uint32_t description_block){
-	uint32_t first_free_file = get_first_free_file(id, description_block);
-	block b;
-	b.block_block = malloc(1024);
-	if(read_block(id, b, description_block).error_id==1){
+uint32_t get_last_free_file(disk_id id, uint32_t id_description_block){
+	free_entry first_free_file = get_first_free_file(id, id_description_block);
+	block file_table;
+	file_table.block_block = malloc(1024);
+	uint32_t check_file_table = (((first_free_file.tfs_next_free - 1) / 16) + 1);
+	if(read_block(id, file_table, id_description_block+check_file_table).error_id==1){
 		fprintf(stderr, "Erreur lors de la lecture du block.\n");
 		return 1;
 	}
-	uint32_t last_free_file = read_inblock(7,b);
-	return 0;
-}
-
-/** Pas fini ! **/
-/*
-** Renvoie l'entrée libre suivante
-*/
-uint32_t get_next_free_file(uint32_t file){
-	
+	uint32_t next_free_file;
+	if(first_free_file.tfs_next_free%16 == 0){
+		next_free_file = read_inblock(255,file_table);
+	}
+	else{
+		next_free_file = read_inblock(((first_free_file.tfs_next_free%16)*16),file_table);
+	}
+	uint32_t last_free_file = first_free_file.tfs_next_free;
+	while(next_free_file != last_free_file){
+		last_free_file = next_free_file;
+		check_file_table = (((last_free_file - 1) / 16) + 1);
+		if(read_block(id, file_table, id_description_block+check_file_table).error_id==1){
+			fprintf(stderr, "Erreur lors de la lecture du block.\n");
+			return 1;
+		}
+		if(last_free_file%16 == 0){
+			next_free_file = read_inblock(255,file_table);
+		}
+		else{
+			next_free_file = read_inblock(((last_free_file%16)*16),file_table);
+		}
+	}
 	return 0;
 }
 
