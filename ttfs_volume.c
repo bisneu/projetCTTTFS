@@ -173,6 +173,9 @@ int remove_file_block(){
 	return 0;
 }
 
+/*
+** fonction qui initialise les data_block d'une partition 
+*/
 void initiate_data_block(disk_id id,uint32_t partition){
 	block zero;
 	block description; 
@@ -181,21 +184,55 @@ void initiate_data_block(disk_id id,uint32_t partition){
 	description.block_block = malloc(1024);
 	tmp.block_block = malloc(1024);
 	read_block(id,zero,0);
-	int block_partition_zero = first_block_partition(description,partition);	
+	int block_partition_zero = first_block_partition(zero,partition);	
 	read_block(id,description,block_partition_zero);
 	int first_free_block = read_inblock(4,description);
 	int total_free_block = read_inblock(3,description);
 	int i = 0;
 	for(i=0; i<total_free_block; i++){
-		read_block(id,tmp,block_partition_zero+first_free_block+i);
+		read_block(id,tmp,(block_partition_zero+first_free_block-1)+i);
 		if(i!=(total_free_block-1)){
 			write_inblock(tmp,255,i+1);
 		}
 		else {
 			write_inblock(tmp,255,i);
 		}
-		write_block(id,tmp,block_partition_zero+first_free_block+i);				
+		write_block(id,tmp,(block_partition_zero+first_free_block-1)+i);				
 	}
 }
 
+/*
+** fonction qui renvoie l'id du premier block libre de la partition
+*/
+uint32_t get_first_free_block(disk_id id, uint32_t partition, uint32_t id_description_block){
+	uint32_t retour_valeur = 0;
+	block description_block;
+	description_block.block_block = malloc(1024);
+	read_block(id,description_block,id_description_block);
+	retour_valeur = id_description_block +read_inblock(4,description_block);
+	free(description_block.block_block);
+	return retour_valeur;
+}
 
+// je dois avoir le tfs_free_file du block de description 
+// initialisé le block temporaire 
+// et le int comparateur 
+uint32_t get_last_free_block(disk_id id, uint32_t partition, uint32_t id_description_block){
+	uint32_t prev_free_block = get_first_free_block(id,partition,id_description_block);
+	uint32_t next_free_block = 0;
+	block description_block;
+	block tmp_block;
+	description_block.block_block = malloc(1024);
+	tmp_block.block_block = malloc(1024);
+	read_block(id,description_block,id_description_block);
+	read_block(id,tmp_block,prev_free_block);
+	next_free_block = read_inblock(1023,tmp_block)+ id_description_block;
+	while(next_free_block != prev_free_block){
+		prev_free_block = next_free_block;
+		read_block(id,tmp_block,prev_free_block);
+		next_free_block = read_inblock(1023,tmp_block)+ id_description_block;
+	}
+	free(description_block.block_block);
+	free(tmp_block.block_block);
+	return next_free_block;
+}

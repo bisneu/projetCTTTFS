@@ -67,8 +67,8 @@ int main(int argc, char **argv){
 	uint32_t taille_disque = read_inblock(0,b);
 	uint32_t nbr_partitions = read_inblock(1,b);
 	uint32_t check_space = 0;
-	for(i=1; i<argc; i++){
-		check_space += mes_partitions[i];
+	for(i=0; i<argc; i++){
+		check_space = check_space +mes_partitions[i];
 	}
 	if(check_space >= taille_disque){
 		fprintf(stderr,"Le disque n'a que %d blocks.\n", taille_disque);
