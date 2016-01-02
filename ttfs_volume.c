@@ -20,7 +20,7 @@ void initiate_description_block(block block_zero, block b, uint32_t partition,ui
 /*
 ** Renvoie le premier block d'une partition 
 */
-uint32_t  first_block_partition(block block_zero, uint32_t partition){
+uint32_t get_description_block(block block_zero, uint32_t partition){
 	uint32_t compteur = 1 ;
 	int i = 0; 
 	for(i = 1; i<partition; i++){
@@ -43,7 +43,7 @@ void initiate_block(block b,int n){
 ** Initialise la table des fichiers d'une partition
 */
 void initiate_file_table(disk_id id,block block_zero,int nbr_fic,int partition){
-	uint32_t block_partition = first_block_partition(block_zero,partition);
+	uint32_t block_partition = get_description_block(block_zero,partition);
 	block b;
 	uint32_t compteur=0;
 	uint32_t compteur2=1;
@@ -202,9 +202,9 @@ void initiate_data_block(disk_id id,uint32_t partition){
 }
 
 /*
-** fonction qui renvoie l'id du premier block libre de la partition
+** Renvoie l'id du premier block libre de la partition
 */
-uint32_t get_first_free_block(disk_id id, uint32_t partition, uint32_t id_description_block){
+uint32_t get_first_free_block(disk_id id, uint32_t id_description_block){
 	uint32_t retour_valeur = 0;
 	block description_block;
 	description_block.block_block = malloc(1024);
@@ -214,11 +214,11 @@ uint32_t get_first_free_block(disk_id id, uint32_t partition, uint32_t id_descri
 	return retour_valeur;
 }
 
-// je dois avoir le tfs_free_file du block de description 
-// initialisé le block temporaire 
-// et le int comparateur 
-uint32_t get_last_free_block(disk_id id, uint32_t partition, uint32_t id_description_block){
-	uint32_t prev_free_block = get_first_free_block(id,partition,id_description_block);
+/*
+** Renvoie l'id du dernier block libre de la partition
+*/
+uint32_t get_last_free_block(disk_id id, uint32_t id_description_block){
+	uint32_t prev_free_block = get_first_free_block(id,id_description_block);
 	uint32_t next_free_block = 0;
 	block description_block;
 	block tmp_block;
@@ -236,3 +236,46 @@ uint32_t get_last_free_block(disk_id id, uint32_t partition, uint32_t id_descrip
 	free(tmp_block.block_block);
 	return next_free_block;
 }
+
+/*
+** Renvoie la première entrée libre
+*/
+free_entry get_first_free_file(disk_id id, uint32_t description_block){
+	free_entry first_free_entry;
+	block b;
+	b.block_block = malloc(1024);
+	if(read_block(id, b, description_block).error_id==1){
+		fprintf(stderr, "Erreur lors de la lecture du block.\n");
+		return 1;
+	}
+	first_free_entry.tfs_next_free = get_next_free_file();
+	read_inblock(7,b) = ;
+	return first_free_entry;
+}
+
+
+/** Pas fini ! **/
+/*
+** Renvoie la dernière entrée libre
+*/
+uint32_t get_last_free_file(disk_id id, uint32_t description_block){
+	uint32_t first_free_file = get_first_free_file(id, description_block);
+	block b;
+	b.block_block = malloc(1024);
+	if(read_block(id, b, description_block).error_id==1){
+		fprintf(stderr, "Erreur lors de la lecture du block.\n");
+		return 1;
+	}
+	uint32_t last_free_file = read_inblock(7,b);
+	return 0;
+}
+
+/** Pas fini ! **/
+/*
+** Renvoie l'entrée libre suivante
+*/
+uint32_t get_next_free_file(uint32_t file){
+	
+	return 0;
+}
+

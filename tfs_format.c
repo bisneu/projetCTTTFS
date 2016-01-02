@@ -66,7 +66,7 @@ int main(int argc, char **argv){
 
 	block desc_b;
 	desc_b.block_block = malloc(1024);
-	if(read_block(id, desc_b, first_block_partition(b,atoi(argv[2]))).error_id==1){
+	if(read_block(id, desc_b, get_description_block(b,atoi(argv[2]))).error_id==1){
 		fprintf(stderr, "Erreur lors de la lecture du block de description de la partition en attente de formatage.\n");
 		return 1;
 	}
@@ -78,13 +78,13 @@ int main(int argc, char **argv){
 /*------------------------------------ DEBUT FORMATAGE ------------------------------------*/
 	block b2;
 	b2.block_block = malloc(1024);
-	error rep = read_block(id,b2,first_block_partition(b,atoi(argv[2])));
+	error rep = read_block(id,b2,get_description_block(b,atoi(argv[2])));
 	if(rep.error_id == 1){
 		fprintf(stderr, "Erreur lors du partitionnage du disque.");
 		return 1;
 	}
 	initiate_description_block(b,b2,atoi(argv[2]),atoi(argv[4]));
-	write_block(id,b2,first_block_partition(b,atoi(argv[2])));
+	write_block(id,b2,get_description_block(b,atoi(argv[2])));
 	initiate_file_table(id,b,atoi(argv[4]),atoi(argv[2]));
 	initiate_data_block(id,atoi(argv[2]));
 	free(b.block_block);	

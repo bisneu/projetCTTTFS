@@ -11,7 +11,12 @@
 #include <unistd.h>
 #include <stdint.h>
 
-int pos_blockDesc(disk_id id, uint32_t* tab);
+int verif_file(char *str, DIR *cur_dir);
+int verif_rep(char *str, DIR *cur_dir);
+int compte_separateur(char* str);	
+char* bout_chemin(char *str,int del);
+void avoir_le_dossier(char* str,char* ret);
+int rec_open_file(char *str, int i, DIR *cur_dir);
 char convert_char(int i);
 void convertir_32(int decimal, char* hexa);
 void convertir_8(uint8_t decimal, char* hexa);
@@ -29,11 +34,4 @@ error read_block(disk_id id, block b, uint32_t num);
 error start_disk(char *name, disk_id *id);
 error stop_disk(disk_id id);
 error sync_disk(disk_id id);
-int verif_file(char *str, DIR *cur_dir);
-int verif_rep(char *str, DIR *cur_dir);
-int  compte_separateur(char* str);	
-char* bout_chemin(char *str,int del);
-void avoir_le_dossier(char* str,char* ret);
-int rec_open_file(char *str, int i, DIR *cur_dir);
-void enleve_le_slash(char* str);
 #endif
