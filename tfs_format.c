@@ -52,14 +52,17 @@ int main(int argc, char **argv){
   	block b;
 	b.block_block = malloc(1024);
 	if(read_block(id, b, 0).error_id==1){
+		stop_disk(id);
 		fprintf(stderr, "Erreur lors de la lecture du block.\n");
 		return 1;
 	}
 	if(read_inblock(1,b)<atoi(argv[2])){
+		stop_disk(id);
 		fprintf(stderr, "Erreur, partition %s introuvable.\n", argv[2]);
 		return 1;
 	}
 	if((read_inblock((atoi(argv[2])+1),b)<(atoi(argv[4])+2))){
+		stop_disk(id);
 		fprintf(stderr, "Erreur, la partation ne peux supporter un tel nombre de fichier max.\n");
 		return 1;
 	}
@@ -67,10 +70,12 @@ int main(int argc, char **argv){
 	block desc_b;
 	desc_b.block_block = malloc(1024);
 	if(read_block(id, desc_b, get_description_block(b,atoi(argv[2]))).error_id==1){
+		stop_disk(id);
 		fprintf(stderr, "Erreur lors de la lecture du block de description de la partition en attente de formatage.\n");
 		return 1;
 	}
 	if(read_inblock(0,desc_b)>0){
+		stop_disk(id);
 		fprintf(stderr, "Erreur, partition %s déjà formatée.\n", argv[2]);
 		return 1;
 	}
@@ -80,6 +85,7 @@ int main(int argc, char **argv){
 	b2.block_block = malloc(1024);
 	error rep = read_block(id,b2,get_description_block(b,atoi(argv[2])));
 	if(rep.error_id == 1){
+		stop_disk(id);
 		fprintf(stderr, "Erreur lors du partitionnage du disque.");
 		return 1;
 	}

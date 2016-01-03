@@ -60,6 +60,7 @@ int main(int argc, char **argv){
   	block b;
 	b.block_block = malloc(1024);
 	if(read_block(id, b, 0).error_id==1){
+		stop_disk(id);
 		fprintf(stderr, "Erreur lors de la lecture du block.\n");
 		return 1;
 	}
@@ -71,6 +72,7 @@ int main(int argc, char **argv){
 		check_space = check_space +mes_partitions[i];
 	}
 	if(check_space >= taille_disque){
+		stop_disk(id);
 		fprintf(stderr,"Le disque n'a que %d blocks.\n", taille_disque);
 		return 1;
 	}
@@ -79,7 +81,8 @@ int main(int argc, char **argv){
 						Deuxième étapes écriture dans le fichier
 	*******************************************************************************************************************/ 
 
-	if(taille_disque <=(total_partition(b,(nbr_partitions))+compteur)){
+	if(taille_disque <=(total_partition(b,(nbr_partitions))+compteur)){		
+		stop_disk(id);
 		fprintf(stderr,"Partitionnage impossible : nombre de blocks disponibles insufisant.\n");
 		return 1;
 		/* Rajouter une option d'overwrite ! */

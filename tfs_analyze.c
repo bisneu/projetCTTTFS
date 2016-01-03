@@ -22,6 +22,7 @@ int main(int argc, char *argv[]){
   	block b;
 	b.block_block = malloc(1024);
 	if(read_block(id, b, 0).error_id==1){
+		stop_disk(id);
 		fprintf(stderr, "Erreur lors de la lecture du block.\n");
 		return 1;
 	}
@@ -38,6 +39,7 @@ int main(int argc, char *argv[]){
 			block desc_b;
 			desc_b.block_block = malloc(1024);
 			if(read_block(id, desc_b, get_description_block(b,i+1)).error_id==1){
+				stop_disk(id);
 				fprintf(stderr, "Erreur lors de la lecture d'un block de description.\n");
 				return 1;
 			}
