@@ -1,44 +1,6 @@
-- régler le probleme de chemin dans toutes les commandes 
-- faire le chainages des entrées de table 
-- faire le chainage des block libres
-- pour tfs_format faire une verification par rapport à la taille de la partition et le nombre de fichier
-- initialisation des data blocks
-
-
-- Au maximum 1 block contient 1 fichier
-- il faudra revoir les testes dans tfs_format , tfs_partition (taille occupé par un fichier etc)     
-
-28/12 :
-Bisneu : exist_file + chainage de fichier
-Ozu : revoir/rajouter des tests pour les fonctions (nb partitions mini, etc...)
-Verification existence formatage
-
-* tfs_create.c
-* tfs_partition.c
-* tfs_format.c
-* tfs_analyze.c
-* logical_layer.c
-* logical_layer.h
-
-29/12 :
-Bisneu : chainage
-Ozu : répertoire
-tfs_analyze.c : rajouter un test pour savoir si la partition est formatée
-tfs_create.c ; tfs_partition.c ; tfs_format.c : vérifier si les nombres dépassent 2^32
-
 30/12 : finir API 1 + commencer API 2
-get_first_free_block
-get_first_free_file
-get_last_free_block
-get_last_free_file
 repertoire
-
 31/12 : check up + Attention aux arrets de disk lors d'une erreur !!!! + vérifier malloc & free
-
 01/01 : commencer les commandes + bibli dynamique + test espace disk suffisant
-
-
-
-
 
 

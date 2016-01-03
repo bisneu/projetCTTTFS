@@ -8,7 +8,7 @@ void initiate_description_block(block block_zero, block b, uint32_t partition,ui
 	write_inblock(b,1,TTTFS_VOLUME_BLOCK_SIZE); // taille d'un block 
 	uint32_t taille_partition = read_inblock(1+partition,block_zero); 
 	write_inblock(b,2,taille_partition); // taille d'une partition 
-	uint32_t tmp = (64*nbr_fic)/1024; 
+	uint32_t tmp = ((64*nbr_fic)-1)/1024; 
 	uint32_t libre = taille_partition-(tmp+2);
 	write_inblock(b,3,libre); // nombre de block libre 
 	write_inblock(b,4,(tmp+3)); // le numéro du premier block libre  
