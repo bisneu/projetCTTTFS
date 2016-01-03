@@ -30,6 +30,9 @@ tfs_format.o: tfs_format.c ttfs_volume.h
 ttfs_volume.o: ttfs_volume.c ttfs_volume.h
 	$(CC) -o $@ -c $< $(CFLAGS)
 
+ttfs_api.o: ttfs_api.c ttfs_api.h
+	$(CC) -o $@ -c $< $(CFLAGS)
+
 logical_layer.o: logical_layer.c logical_layer.h
 	$(CC) -o $@ -c $< $(CFLAGS)
 
@@ -42,7 +45,7 @@ clean:
 	rm -rf *.o
 
 mrproper: clean
-	rm -rf tfs_create tfs_partition tfs_analyze
+	rm -rf tfs_create tfs_partition tfs_analyze tfs_format
 
 tfs:
 	rm -rf *.tfs

@@ -23,15 +23,10 @@ struct free_entry{
 void initiate_description_block(block block_zero, block b, uint32_t partition,uint32_t nbr_fic);
 void initiate_file_table(disk_id id ,block block_zero,int nbr_fic,int partition);
 void initiate_block(block b, int n);
-int add_free_block(disk_id id, int description_block);
-int remove_free_block(disk_id id, int description_block);
-int add_free_entry(disk_id id, int description_block);
-int remove_free_entry(disk_id id, int description_block);
 void initiate_data_block(disk_id id,uint32_t partition);
 uint32_t get_first_free_block(disk_id id, uint32_t id_description_block);
 uint32_t get_last_free_block(disk_id id, uint32_t id_description_block);
-free_entry get_first_free_file(disk_id id, uint32_t description_block);
-uint32_t get_last_free_file(disk_id id, uint32_t description_block);
-uint32_t get_next_free_file(uint32_t file);
+free_entry get_first_free_file(disk_id id, uint32_t id_description_block);
+uint32_t get_last_free_file(disk_id id, uint32_t id_description_block);
 uint32_t verif_chemin(char *chemin);
 void bout_chemin_final(char *chemin, char* str);
