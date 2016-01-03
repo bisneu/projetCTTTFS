@@ -3,4 +3,49 @@ repertoire
 31/12 : check up + Attention aux arrets de disk lors d'une erreur !!!! + vérifier malloc & free
 01/01 : commencer les commandes + bibli dynamique + test espace disk suffisant
 
+03/01 : Objectif : Implémenter tout ce qu'il faut pour commencer les API
+-> Ozuk
+	* TFS Directories
+-> Bisneu
+	* Pathnames
+
+04/01 : On commence l'écriture des API 1&2
+-> Ozuk
+	* int tfs_mkdir(const char *path, mode_t mode);
+	* int tfs_rmdir(const char *path);
+-> Bisneu
+	* int tfs_rename(const char *old, const char *new);
+	* int tfs_open(const char *name,int oflag, ...);
+
+05/01 : API 1&2
+-> Ozuk
+	* ssize_t tfs_read(int fildes,void *buf,size_t nbytes);
+	* ssize_t tfs_write(int fildes,void *buf,size_t nbytes);
+-> Bisneu
+	* int tfs_close(fildes);
+	* off_t tfs_lseek(int fildes,off_t offset,int whence);
+
+06/01 : API 1&2
+-> Ozuk
+	* DIR *opendir(const char *filename);
+	* int closedir(DIR *dirp);
+-> Bisneu
+	* struct dirent *readdir(DIR *dirp);
+	* void rewinddir(DIR *dirp);
+
+07/01 : On commence les commandes
+-> Ozuk
+	* tfs_cp
+	* tfs_mv
+	* tfs_rm
+-> Bisneu
+	* tfs_mkdir
+	* tfs_cat
+
+08/01 : Objectif : finir les commandes
+Faire un check up
+
+09/01 :
+TFS Special Files
+
 
