@@ -18,18 +18,6 @@ void initiate_description_block(block block_zero, block b, uint32_t partition,ui
 }
 
 /*
-** Renvoie le premier block d'une partition 
-*/
-uint32_t get_description_block(block block_zero, uint32_t partition){
-	uint32_t compteur = 1 ;
-	int i = 0; 
-	for(i = 1; i<partition; i++){
-		compteur = compteur + read_inblock(1+i,block_zero);
-	}
-	return compteur;
-}
-
-/*
 ** Initialise à 0 un block donnée 
 */
 void initiate_block(block b,int n){
@@ -244,10 +232,7 @@ free_entry get_first_free_file(disk_id id, uint32_t id_description_block){
 	free_entry first_free_entry;
 	block b;
 	b.block_block = malloc(1024);
-	if(read_block(id, b, id_description_block).error_id==1){
-		fprintf(stderr, "Erreur lors de la lecture du block.\n");
-		return NULL;
-	}
+	read_block(id, b, id_description_block);
 	first_free_entry.tfs_next_free = read_inblock(7,b);
 	return first_free_entry;
 }

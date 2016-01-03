@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <stdint.h>
 
+uint32_t get_description_block(block block_zero, uint32_t partition);
 int verif_file(char *str, DIR *cur_dir);
 int verif_rep(char *str, DIR *cur_dir);
 int compte_separateur(char* str);	

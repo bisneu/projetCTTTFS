@@ -35,6 +35,18 @@ int main(int argc, char *argv[]){
 		uint32_t i = 0;
 		for(i=0; i<nb_part; i++){
 			printf(" > Partition %d : %d blocks\n", i, read_inblock(i+2,b));
+			block desc_b;
+			desc_b.block_block = malloc(1024);
+			if(read_block(id, desc_b, get_description_block(b,i+1)).error_id==1){
+				fprintf(stderr, "Erreur lors de la lecture d'un block de description.\n");
+				return 1;
+			}
+			if(read_inblock(0,desc_b)>0){
+				printf("    > La partition est formatee.\n");
+			}
+			else{
+				printf("    > La partition n'est pas formatee.\n");
+			}
 		}
 	}
 	printf("Lecture terminée.\n");

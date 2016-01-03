@@ -1,6 +1,18 @@
 #include "logical_layer.h"
 
 /*
+** Renvoie le premier block d'une partition 
+*/
+uint32_t get_description_block(block block_zero, uint32_t partition){
+	uint32_t compteur = 1 ;
+	int i = 0; 
+	for(i = 1; i<partition; i++){
+		compteur = compteur + read_inblock(1+i,block_zero);
+	}
+	return compteur;
+}
+
+/*
 ** vérifie si le fichier dans le dossier donnée en argument existe
 */
 int verif_file(char *str, DIR *cur_dir){
