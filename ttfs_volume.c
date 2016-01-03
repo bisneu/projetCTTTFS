@@ -275,3 +275,28 @@ uint32_t get_last_free_file(disk_id id, uint32_t id_description_block){
 	return 0;
 }
 
+uint32_t verif_chemin(char *chemin){
+	if(strcmp(bout_chemin(chemin,0),"FILE:") != 0){
+		fprintf(stderr,"Une erreur dans le chemin, il doit commencer par FILE:\n");		
+		return 1;	
+	}
+	if(strcmp(bout_chemin(chemin,1),"") != 0){
+		fprintf(stderr,"Une erreur dans le chemin\n");		
+		return 1;	
+	}
+	return 0;
+}
+
+void bout_chemin_final(char *chemin, char* str){
+	uint32_t nombre_slash = compte_separateur(chemin);
+	int i=0;
+	// initialisation du string 
+	for(i=0; i<strlen(chemin-7)*sizeof(char); i++){
+		*(str+i) = '\0';
+	}
+	int j=0;
+	for(j=2; j<nombre_slash ; j++){
+		strcat(str,strcat(bout_chemin(chemin,j),"/"));	
+	}
+}
+
