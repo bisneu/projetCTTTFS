@@ -61,7 +61,7 @@ int main(int argc, char **argv){
 		fprintf(stderr, "Erreur, partition %s introuvable.\n", argv[2]);
 		return 1;
 	}
-	if((read_inblock((atoi(argv[2])+1),b)<(atoi(argv[4])+2))){
+	if((read_inblock((atoi(argv[2])+1),b)<(atoi(argv[4])+2+(((64*atoi(argv[4]))/1024)+1)))){
 		stop_disk(id);
 		fprintf(stderr, "Erreur, la partation ne peux supporter un tel nombre de fichier max.\n");
 		return 1;
