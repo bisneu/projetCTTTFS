@@ -129,3 +129,9 @@ int add_file_block(){
 int remove_file_block(){
 	return 0;
 }
+
+int existence_disk(char* chemin){
+	char* str = malloc((strlen(chemin)-7)*sizeof(char));
+	bout_chemin_final(chemin,str);
+	return verif_rep(bout_chemin(final,0),open("."));	
+}
