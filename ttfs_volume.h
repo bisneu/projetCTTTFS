@@ -19,6 +19,12 @@ struct free_entry{
 	uint32_t tfs_indirect2;
 	uint32_t tfs_next_free;
 };
+typedef struct dir_entry dir_entry;
+
+struct dir_entry{
+	uint32_t file_number;
+	uint32_t* name;
+};
 
 void initiate_description_block(block block_zero, block b, uint32_t partition,uint32_t nbr_fic);
 void initiate_file_table(disk_id id ,block block_zero,int nbr_fic,int partition);

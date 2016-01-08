@@ -9,7 +9,8 @@ void initiate_description_block(block block_zero, block b, uint32_t partition,ui
 	uint32_t taille_partition = read_inblock(1+partition,block_zero); 
 	write_inblock(b,2,taille_partition); // taille d'une partition 
 	uint32_t tmp = ((64*nbr_fic))/1024; 
-	uint32_t libre = taille_partition-(tmp+3);
+	// uint32_t fichier_racine  = (nbr_fic/35)+1; rajouter apres et
+	uint32_t libre = taille_partition-(tmp+3); // 1 pour le block de description, tmp pour la table de fichier, 1 pour le fichier systeme 1 pour incrementer tmp
 	write_inblock(b,3,libre); // nombre de block libre 
 	write_inblock(b,4,(tmp+4)); // le numéro du premier block libre  
 	write_inblock(b,5,nbr_fic); // nombre total de fichiers dans ce volume
@@ -235,3 +236,68 @@ void bout_chemin_final(char *chemin, char* str){
 	}
 }
 
+void transforme_ascii(char* str, uint32_t* tab){
+	int i=0;
+	for(i=0; i<strlen(str); i++){
+		*(tab+i) = *(str+i);
+	}
+}
+
+uint32_t recherche_place_dossier(block dir){
+	int test =0;
+	int i=0;
+	for(i=2; i<35; i++){
+		if(read_inblock((i*29),dir)==0){
+			int j=0;
+			for(j=0; j<28; j++){
+				if(read_inblock((i*29)+j,dir)!=0){
+					test = 1;
+			   		break;	
+				}
+			}
+			if(test==0){
+				return i*29;
+			}
+			else { test = 0;}	
+		}
+	}
+	return 0;
+}
+
+uint32_t create_entree(dir_entry new_entry ,char* name, uint32_t file_number){
+	if(strlen(name)<=28){
+		new_entry.file_number = file_number;
+		uint32_t* tab = malloc(sizeof(uint32_t)*strlen(name));
+		transforme_ascii(name,tab);
+		int i=0;
+		for(i=0; i<strlen(name); i++){
+			if(*(tab+i)<0 || *(tab+i)>127){
+				fprintf(stderr, "Verifier le nom probleme de codage en ascii-0\n");		
+				return 1;
+			}	 	
+		}
+		new_entry.name = tab;
+		return 0;
+	}	
+		fprintf(stderr, "nombre de caractere trops eleve\n");		
+		return 1;
+}
+
+
+int add_file_dir(block dir, uint32_t file_number, char* name){
+	dir_entry entry;
+	if(create_entree(entry,name,file_number) == 1){
+		fprintf(stderr,"Le fichier n'a pas ete cree \n");		
+		return 1;	
+	}
+	uint32_t place=recherche_place_dossier(dir);
+	if(place == 1){
+		return 1;	
+	}
+	write_inblock(dir,place,entry.file_number);
+	int i=0;
+	for(i=1; i<strlen(name); i++){
+		write_inblock(dir,place+i,entry.name[i]);
+	}
+	return 0;
+}
