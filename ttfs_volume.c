@@ -243,6 +243,10 @@ void transforme_ascii(char* str, uint32_t* tab){
 	}
 }
 
+/*
+** fonction qui pour un block donnee renvoie la position de la premiere entree libre 
+** renvoie 0 en cas d erreur 
+*/
 uint32_t recherche_place_dossier(block dir){
 	int test =0;
 	int i=0;
@@ -264,6 +268,9 @@ uint32_t recherche_place_dossier(block dir){
 	return 0;
 }
 
+/*
+** fonction qui cree une entree si tout est correcte 
+*/
 uint32_t create_entree(dir_entry new_entry ,char* name, uint32_t file_number){
 	if(strlen(name)<=28){
 		new_entry.file_number = file_number;
@@ -283,7 +290,9 @@ uint32_t create_entree(dir_entry new_entry ,char* name, uint32_t file_number){
 		return 1;
 }
 
-
+/*
+** fonction qui rajoute une entree dans un block donnee 
+*/
 int add_file_dir(block dir, uint32_t file_number, char* name){
 	dir_entry entry;
 	if(create_entree(entry,name,file_number) == 1){
@@ -291,7 +300,7 @@ int add_file_dir(block dir, uint32_t file_number, char* name){
 		return 1;	
 	}
 	uint32_t place=recherche_place_dossier(dir);
-	if(place == 1){
+	if(place == 0){
 		return 1;	
 	}
 	write_inblock(dir,place,entry.file_number);
@@ -301,3 +310,113 @@ int add_file_dir(block dir, uint32_t file_number, char* name){
 	}
 	return 0;
 }
+
+/*
+** fonction pour un numero de fichier donne recupere dans un block l entree de fichier 
+*/
+void get_file_entry(block table,uint32_t file_number, free_entry entry){
+	int i=0;
+	for(i=0; i<15; i++){
+		// 4-13
+		if(file_number == read_inblock((i*16)+15,table)){
+			entry.tfs_size = read_inblock((i*16)+0,table);	
+			entry.tfs_type = read_inblock((i*16)+1,table);	
+			entry.tfs_subtype = read_inblock((i*16)+3,table);	
+			entry.tfs_direct = malloc(sizeof(uint32_t)*10);
+			int j=0;
+			for(j=0; j<10; j++){
+				*(entry.tfs_direct+j) = read_inblock((i*16)+4+j,table);	
+			}
+			entry.tfs_indirect1 = read_inblock((i*16)+14,table);	
+			entry.tfs_indirect2 = read_inblock((i*16)+15,table);	
+			entry.tfs_next_free = read_inblock((i*16)+16,table);	
+		}
+	}
+}
+
+uint32_t get_free_block(block zero){
+	return read_inblock(3,zero);
+}
+
+uint32_t first_free_file(block zero){
+	return read_inblock(7,zero);
+}
+
+uint32_t get_free_file(block zero){
+	return read_inblock(6,zero);
+}
+
+uint32_t first_free_block(block zero){
+	return read_inblock(4,zero);
+}
+
+void  set_first_free_block(block zero,uint32_t elem){
+	write_inblock(zero,4,elem);
+}
+
+void  set_first_free_file(block zero,uint32_t elem){
+	write_inblock(zero,7,elem);
+}
+
+void  set_free_block(block zero,uint32_t elem){
+	write_inblock(zero,3,elem);
+}
+
+void  set_free_file(block zero,uint32_t elem){
+	write_inblock(zero,6,elem);
+}
+
+uint32_t nombre_partition(block zero){
+	return read_inblock(1,zero);
+}
+
+int verif_path(char* path){
+	if(verif_chemin(path) == 0){
+		// l'indice 0 correspond au FILE 
+		// l'indice 1 correspond au vide
+		// l'indice 2 correspond au disk
+		char* name = bout_chemin(path,2);
+		disk_id disk; 
+		if(exist_disk(name)==0){
+			error rep = start_disk(name,&disk);
+			if(rep.error_id==0){
+				uint32_t numero_partition = atoi(bout_chemin(path,3))+1;
+				if(numero_partition<0){
+					fprintf(stderr,"Le numero de la partition ne peut pas etre negatif");
+					return 1;
+				} 
+				block zero; 
+				zero.block_block = malloc(1024);
+				read_block(disk,zero,0);
+				if(numero_partition <= nombre_partition(zero)){
+					block description;
+					description.block_block = malloc(1024);
+					read_block(disk,description,get_description_block(zero,numero_partition));			
+				// il faut que je verifie si la partition existe indice 3
+				}
+				// il faut que je verifie que le chemin existe aussi apres
+ 				// 	-verifie a la racine si le le name que j aurai a lindice 4 existe 
+				// ********* a continuer ******
+			}
+			return 1;	
+		}
+		return 1;	
+	}
+	return 1;
+}
+void mkdir(char* path){
+	
+}
+
+/*
+int verif_direct(block table , uint32_t file_number){
+	return 0;	
+}
+
+void add_in_table(){
+
+} 
+
+int tfs_rename(char* old, char *new){	
+	return 0;		
+}*/
