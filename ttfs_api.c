@@ -1,12 +1,11 @@
 #include "ttfs_api.h"
-
 /*
 ** Ajoute un bloc à la liste des blocs libres
 */
 int add_free_block(disk_id id, uint32_t id_description_block, uint32_t id_block_to_add){
 	/* Mise en mémoire du block de description */
   	block description_block;
-	b.block_block = malloc(1024);
+	description_block.block_block = malloc(1024);
 	if(read_block(id,description_block,id_description_block).error_id==1){
 		fprintf(stderr, "Erreur lors de la lecture du block.\n");
 		return 1;
@@ -50,7 +49,7 @@ int add_free_block(disk_id id, uint32_t id_description_block, uint32_t id_block_
 int remove_free_block(disk_id id, uint32_t id_description_block){
 	/* Mise en mémoire du block de description */
   	block description_block;
-	b.block_block = malloc(1024);
+	description_block.block_block = malloc(1024);
 	if(read_block(id,description_block,id_description_block).error_id==1){
 		fprintf(stderr, "Erreur lors de la lecture du block.\n");
 		return 1;
@@ -60,7 +59,10 @@ int remove_free_block(disk_id id, uint32_t id_description_block){
 	/* Overwrite de la valeur de TTTFS_VOLUME_FREE_BLOCK_COUNT dans le block de description en mémoire */
 	write_inblock(description_block,3,read_inblock(3,description_block)-1);
 	/* Overwrite de la valeur de TTTFS_VOLUME_FIRST_FREE_BLOCK dans le block de description en mémoire */
-	write_inblock(description_block,4,read_inblock(255,id_block_to_remove));
+	block remove_block;
+	remove_block.block_block = malloc(1024);
+	read_block(id,remove_block,id_description_block+id_block_to_remove);
+	write_inblock(description_block,4,read_inblock(255,remove_block));
 	/* Overwrite du description_block en mémoire sur le disk */
 	write_block(id,description_block,id_description_block);
 
@@ -72,7 +74,7 @@ int remove_free_block(disk_id id, uint32_t id_description_block){
 		return 1;
 	}
 	/* Overwrite de la valeur du next_free_block dans le last_free_block en mémoire */
-	write_inblock(block_to_add,255,0);
+	write_inblock(block_to_remove,255,0);
 	/* Overwrite du last_free_block sur le disk */
 	write_block(id,block_to_remove,id_block_to_remove);
 	return 0;
@@ -84,17 +86,6 @@ int remove_free_block(disk_id id, uint32_t id_description_block){
 ** Ajoute une entrée de répertoire à la liste des entrées libres
 */
 int add_free_entry(disk_id id, uint32_t id_description_block){
-  	block b;
-	b.block_block = malloc(1024);
-	if(read_block(id, b, description_block).error_id==1){
-		fprintf(stderr, "Erreur lors de la lecture du block.\n");
-		return 1;
-	}
-	uint32_t i = read_inblock(6,b)+1;
-	uint32_t j = read_inblock(7,b)-1;
-	write_inblock(b,6,i); // i = TTTFS_VOLUME_FREE_FILE_COUNT ++
-	write_inblock(b,7,j); // j = TTTFS_VOLUME_FIRST_FREE_FILE --
-	write_block(id, b, id_description_block);
 	return 0;
 }
 
@@ -102,17 +93,6 @@ int add_free_entry(disk_id id, uint32_t id_description_block){
 ** Supprime une entrée de répertoire de la liste des entrées libres
 */
 int remove_free_entry(disk_id id, uint32_t id_description_block){
-  	block b;
-	b.block_block = malloc(1024);
-	if(read_block(id, b, description_block).error_id==1){
-		fprintf(stderr, "Erreur lors de la lecture du block.\n");
-		return 1;
-	}
-	uint32_t i = read_inblock(6,b)-1;
-	uint32_t j = read_inblock(7,b)+1;
-	write_inblock(b,6,i); // i = TTTFS_VOLUME_FREE_FILE_COUNT --
-	write_inblock(b,7,j); // j = TTTFS_VOLUME_FIRST_FREE_FILE ++
-	write_block(id, b, id_description_block);
 	return 0;
 }
 
@@ -130,11 +110,6 @@ int remove_file_block(){
 	return 0;
 }
 
-int existence_disk(char* chemin){
-	char* str = malloc((strlen(chemin)-7)*sizeof(char));
-	bout_chemin_final(chemin,str);
-	return verif_rep(bout_chemin(final,0),open("."));	
-}
 
 
 uint32_t verif_chemin(char *chemin){
@@ -157,9 +132,20 @@ void bout_chemin_final(char *chemin, char* str){
 		*(str+i) = '\0';
 	}
 	int j=0;
-	for(j=2; j<nombre_slash ; j++){
-		strcat(str,strcat(bout_chemin(chemin,j),"/"));	
+	for(j=2; j<=nombre_slash ; j++){
+		if(j!=nombre_slash){	
+			strcat(str,strcat(bout_chemin(chemin,j),"/"));	
+		}
+		else{
+			strcat(str,bout_chemin(chemin,j));	
+		}
 	}
+}
+
+int existence_disk(char* chemin){
+	char* str = malloc((strlen(chemin)-7)*sizeof(char));
+	bout_chemin_final(chemin,str);
+	return verif_rep(bout_chemin(str,0),opendir("."));	
 }
 
 void transforme_ascii(char* str, uint32_t* tab){
@@ -201,6 +187,7 @@ uint32_t create_entree(dir_entry new_entry ,char* name, uint32_t file_number){
 	if(strlen(name)<=28){
 		new_entry.file_number = file_number;
 		uint32_t* tab = malloc(sizeof(uint32_t)*strlen(name));
+		new_entry.nombre_caractere = strlen(name);
 		transforme_ascii(name,tab);
 		int i=0;
 		for(i=0; i<strlen(name); i++){
@@ -214,6 +201,17 @@ uint32_t create_entree(dir_entry new_entry ,char* name, uint32_t file_number){
 	}	
 		fprintf(stderr, "nombre de caractere trops eleve\n");		
 		return 1;
+}
+
+/*
+** fonction qui transforme un tabeau d'ascii en string 
+*/
+void ascii_to_string(dir_entry entry, char* str){
+	int i=0;
+	for(i=0; i<entry.nombre_caractere; i++){
+		*(str+i) = entry.name[i];	
+	}
+
 }
 
 /*
@@ -296,6 +294,12 @@ uint32_t nombre_partition(block zero){
 	return read_inblock(1,zero);
 }
 
+uint32_t get_racine(block description){
+	uint32_t nombre_fic = read_inblock(5,description);	
+	uint32_t tmp =  (nombre_fic*64)/1024;
+	return tmp+2;
+}
+
 int verif_path(char* path){
 	if(verif_chemin(path) == 0){
 		// l'indice 0 correspond au FILE 
@@ -318,10 +322,22 @@ int verif_path(char* path){
 					block description;
 					description.block_block = malloc(1024);
 					read_block(disk,description,get_description_block(zero,numero_partition));			
-				// il faut que je verifie si la partition existe indice 3
+					char* str = malloc(strlen(path)-7);
+					bout_chemin_final(path,str);
+					uint32_t racine = get_description_block(zero,numero_partition)+get_racine(description);	
+					block racine_block; 	
+					racine_block.block_block = malloc(1024);
+					read_block(disk,racine_block,racine);	
+					//directory dir;  		
+					
+					
+					
 				}
-				// il faut que je verifie que le chemin existe aussi apres
- 				// 	-verifie a la racine si le le name que j aurai a lindice 4 existe 
+		
+				// disk.tfs/0/baba  compte_nombre_slash -2 l'indice du bout de chemin commence a 2 jusqua nombre de slash
+				// si l'indice de la boucle est egale au nombre de slash verifier si le nom du fichier existe dans le fic courant 
+				// structure directory creer une entree avec un tableau de d'entree le nombre d'entree
+				// -verifie a la racine si le le name que j aurai a lindice 4 existe 
 				// ********* a continuer ******
 			}
 			return 1;	
@@ -351,3 +367,4 @@ void add_in_table(){
 int tfs_rename(char* old, char *new){	
 	return 0;		
 }*/
+

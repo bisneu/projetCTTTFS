@@ -22,8 +22,15 @@ struct free_entry{
 typedef struct dir_entry dir_entry;
 
 struct dir_entry{
+	uint32_t nombre_caractere;	
 	uint32_t file_number;
 	uint32_t* name;
+};
+
+typedef struct directory directory;
+struct directory{
+	uint32_t nombre_fichier;
+	dir_entry* tab; 
 };
 
 void initiate_description_block(block block_zero, block b, uint32_t partition,uint32_t nbr_fic);
