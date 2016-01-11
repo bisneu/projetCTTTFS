@@ -85,16 +85,63 @@ int remove_free_block(disk_id id, uint32_t id_description_block){
 /*
 ** Ajoute une entrée de répertoire à la liste des entrées libres
 */
-int add_free_entry(disk_id id, uint32_t id_description_block){
+int add_free_entry(disk_id id, uint32_t id_description_block, uint32_t entry_to_add){
+	/* Mise en mémoire du block de description */
+  	block description_block;
+	description_block.block_block = malloc(1024);
+	if(read_block(id,description_block,id_description_block).error_id==1){
+		fprintf(stderr, "Erreur lors de la lecture du block.\n");
+		return 1;
+	}
+	/* Overwrite de la valeur de TTTFS_VOLUME_FREE_FILE_COUNT dans le block de description en mémoire */
+	write_inblock(description_block,6,read_inblock(6,description_block)+1);
+
+	/* A finir ... */
 	return 0;
 }
 
 /*
 ** Supprime une entrée de répertoire de la liste des entrées libres
 */
+/*
 int remove_free_entry(disk_id id, uint32_t id_description_block){
+	// Mise en mémoire du block de description 
+  	block description_block;
+	description_block.block_block = malloc(1024);
+	if(read_block(id,description_block,id_description_block).error_id==1){
+		fprintf(stderr, "Erreur lors de la lecture du block.\n");
+		return 1;
+	}
+	// Mise en mémoire de l'id de entry_to_remove 
+	file_entry entry_to_remove;
+	entry_to_remove = get_first_free_file(id,id_description_block);
+	// Overwrite de la valeur de TTTFS_VOLUME_FREE_FILE_COUNT dans le block de description en mémoire 
+	write_inblock(description_block,6,read_inblock(6,description_block)-1);
+
+	// Mise en mémoire de la file_table 
+	block file_table;
+	file_table.block_block = malloc(1024);
+	if(read_block(id,file_table,(id_description_block+(id_entry_to_remove%15)+1)).error_id==1){
+		fprintf(stderr, "Erreur lors de la lecture du block.\n");
+		return 1;
+	}
+	// Mise en mémoire de entry_to_remove 
+	get_file_entry(table,id_entry_to_remove,entry_to_remove);
+
+	// Overwrite de la valeur de TTTFS_VOLUME_FIRST_FREE_FILE dans le block de description en mémoire 
+	write_inblock(description_block,7,entry_to_remove.tfs_next_free);
+	// Overwrite du description_block en mémoire sur le disk 
+	write_block(id,description_block,id_description_block);
+
+	// Overwrite de la valeur du tfs_next_free dans le entry_to_remove en mémoire 
+	entry_to_remove.tfs_next_free = id_entry_to_remove;
+	// Overwrite de entry_to_remove dans la file_table 
+	// TODO 
+	// Overwite de la file_table sur le disk 
+	write_block(id,file_table,(id_description_block+(id_entry_to_remove%15)+1));
 	return 0;
 }
+*/
 
 /*
 ** Ajoute un bloc à la liste des blocs d’un fichier

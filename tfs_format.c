@@ -63,7 +63,7 @@ int main(int argc, char **argv){
 	}
 	if((read_inblock((atoi(argv[2])+1),b)<(atoi(argv[4])+2+(((64*atoi(argv[4]))/1024)+1)))){
 		stop_disk(id);
-		fprintf(stderr, "Erreur, la partation ne peux supporter un tel nombre de fichier max.\n");
+		fprintf(stderr, "Erreur, la partition ne peux supporter un tel nombre de fichier max.\n");
 		return 1;
 	}
 
